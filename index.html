@@ -28,6 +28,9 @@
     --radius:18px;
     --header-h:72px;
     --font:"Poppins","Noto Sans Myanmar",system-ui,-apple-system,"Segoe UI",sans-serif;
+    --spring:cubic-bezier(.34,1.56,.64,1);
+    --spring-soft:cubic-bezier(.22,1.28,.36,1);
+    --ease-io:cubic-bezier(.45,0,.25,1);
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth;scroll-padding-top:calc(var(--header-h) + 16px)}
@@ -60,7 +63,7 @@
     display:inline-flex;align-items:center;justify-content:center;gap:10px;
     min-height:52px;padding:14px 30px;border-radius:999px;
     font-weight:600;font-size:.98rem;border:1px solid transparent;
-    transition:transform .25s ease,background .25s ease,border-color .25s ease,color .25s ease;
+    transition:transform .4s var(--spring-soft),background .25s ease,border-color .25s ease,color .25s ease;
     white-space:nowrap;
   }
   .btn-prime{background:var(--prime);color:#fff;box-shadow:0 12px 34px -12px rgba(239,67,3,.65)}
@@ -71,8 +74,13 @@
   .btn:hover .arr{transform:translateX(4px)}
 
   /* ---------- Reveal animation (only hidden when JS is active) ---------- */
-  .js .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
+  .js .reveal{opacity:0;transform:translateY(26px) scale(.98);transition:opacity .5s ease,transform .85s var(--spring-soft)}
   .js .reveal.in{opacity:1;transform:none}
+  /* Headings: bigger spring overshoot + scale settle; word-split titles hand the motion to their words */
+  .js h2.section-title.reveal{transform:translateY(30px) scale(.94);transition:opacity .5s ease,transform .95s var(--spring)}
+  .js .section-title.reveal.split{opacity:1;transform:none;transition:none}
+  .section-title .w{display:inline-block;opacity:0;transform:translateY(.42em) scale(.9);transition:opacity .4s ease,transform .8s var(--spring)}
+  .section-title.in .w{opacity:1;transform:translateY(0) scale(1)}
   .reveal.d1{transition-delay:.08s}.reveal.d2{transition-delay:.16s}.reveal.d3{transition-delay:.24s}.reveal.d4{transition-delay:.32s}
   .js .reveal-l{transform:translateX(-30px)}
   .js .reveal-r{transform:translateX(30px)}
@@ -157,8 +165,8 @@
     animation:floaty 3.5s ease-in-out infinite;
   }
   @keyframes floaty{
-    0%,100%{transform:translateY(0);filter:drop-shadow(0 24px 50px rgba(239,67,3,.35))}
-    50%{transform:translateY(-12px);filter:drop-shadow(0 46px 84px rgba(239,67,3,.62))}
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(-12px)}
   }
   .hero-tagline{
     margin-top:74px;padding:22px 0;border-top:1px solid var(--line);
@@ -204,7 +212,7 @@
   .svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:52px}
   .svc{
     background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
-    padding:34px 30px;transition:background .25s ease,border-color .25s ease,transform .25s ease;
+    padding:34px 30px;transition:background .25s ease,border-color .25s ease,transform .45s var(--spring-soft);
     display:flex;flex-direction:column;gap:14px;
   }
   .svc:hover{background:var(--card-hover);border-color:rgba(245,99,33,.5);transform:translateY(-5px)}
@@ -235,7 +243,7 @@
   .work-card{
     border-radius:var(--radius);border:1px solid var(--line);overflow:hidden;
     background:var(--bg-2);display:flex;flex-direction:column;
-    transition:transform .25s ease,border-color .25s ease;
+    transition:transform .45s var(--spring-soft),border-color .25s ease;
   }
   .work-card:hover{transform:translateY(-6px);border-color:rgba(245,99,33,.55)}
   .work-visual{
@@ -273,7 +281,7 @@
   .process-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-top:52px}
   .step{
     border:1px solid var(--line);border-radius:var(--radius);padding:28px 22px;background:var(--card);
-    transition:border-color .25s ease,transform .25s ease;
+    transition:border-color .25s ease,transform .45s var(--spring-soft);
   }
   .step:hover{border-color:rgba(245,99,33,.5);transform:translateY(-4px)}
   .step .sn{font-size:2rem;font-weight:900;color:var(--prime);line-height:1}
@@ -304,7 +312,7 @@
   .pkg-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:52px}
   .pkg{
     border:1px solid var(--line);border-radius:var(--radius);padding:32px 26px;background:var(--card);
-    display:flex;flex-direction:column;gap:14px;transition:transform .25s ease,border-color .25s ease,background .25s ease;
+    display:flex;flex-direction:column;gap:14px;transition:transform .45s var(--spring-soft),border-color .25s ease,background .25s ease;
   }
   .pkg:hover{transform:translateY(-5px);border-color:rgba(245,99,33,.5)}
   .pkg.hot{border-color:var(--prime);background:linear-gradient(170deg,rgba(239,67,3,.18),rgba(255,255,255,.02) 60%)}
@@ -320,7 +328,7 @@
   .ins-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:52px}
   .ins{
     border:1px solid var(--line);border-radius:var(--radius);padding:30px;background:var(--card);
-    display:flex;flex-direction:column;gap:14px;transition:transform .25s ease,border-color .25s ease,background .25s ease;
+    display:flex;flex-direction:column;gap:14px;transition:transform .45s var(--spring-soft),border-color .25s ease,background .25s ease;
   }
   .ins:hover{transform:translateY(-5px);border-color:rgba(245,99,33,.5);background:var(--card-hover)}
   .ins .cat{font-size:.72rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--prime-2)}
@@ -426,10 +434,13 @@
   nav.main-nav a:hover::after{transform:scaleX(1)}
   /* Mobile menu entrance */
   .mobile-menu.open{animation:menuIn .32s ease}
-  @keyframes menuIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
+  @keyframes menuIn{from{opacity:0}to{opacity:1}}
   /* Buttons: press scale, ghost fill sweep, prime shine sweep */
   .btn{position:relative;isolation:isolate;overflow:hidden}
   .btn:active{transform:scale(.97)}
+  /* Micro spring on tap/click: 1 -> .96 press -> 1.03 overshoot -> 1 */
+  .btn.tap{animation:btnTap .5s var(--spring)}
+  @keyframes btnTap{0%{transform:scale(1)}35%{transform:scale(.96)}70%{transform:scale(1.03)}100%{transform:scale(1)}}
   .btn-ghost::before{
     content:"";position:absolute;inset:0;background:var(--prime-soft);z-index:-1;
     transform:scaleX(0);transform-origin:left;transition:transform .4s ease;
@@ -437,7 +448,7 @@
   .btn-ghost:hover::before{transform:scaleX(1)}
   .btn-prime::after{
     content:"";position:absolute;top:0;bottom:0;left:0;width:45%;pointer-events:none;
-    background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);
+    background:linear-gradient(100deg,transparent,rgba(239,67,3,.4) 25%,rgba(255,255,255,.95) 50%,rgba(239,67,3,.4) 75%,transparent);
     transform:translateX(-190%) skewX(-20deg);transition:transform .6s ease;
   }
   .btn-prime:hover::after{transform:translateX(380%) skewX(-20deg)}
@@ -451,12 +462,19 @@
   }
   @keyframes heroDrift{from{transform:translate3d(-4%,-2%,0) scale(1)}to{transform:translate3d(4%,3%,0) scale(1.1)}}
   .hero .wrap{position:relative;z-index:1}
-  .anim{opacity:0;animation:heroUp .85s cubic-bezier(.22,.61,.36,1) both}
+  .anim{opacity:0;animation:heroUp .9s var(--spring-soft) both}
   .a1{animation-delay:.05s}.a2{animation-delay:.16s}.a3{animation-delay:.29s}
   .a4{animation-delay:.46s}.a5{animation-delay:.62s}.a6{animation-delay:.78s}.a7{animation-delay:.94s}
   @keyframes heroUp{from{opacity:0;transform:translateY(34px)}to{opacity:1;transform:none}}
   .h-line{display:block}
-  .hero-mark{animation:markIn 1s cubic-bezier(.22,.61,.36,1) .2s both}
+  /* Hero headline: word-level spring pop (JS wraps words; line animation disabled once split) */
+  .hero h1.words .h-line{animation:none;opacity:1}
+  .hero h1 .w{display:inline-block;opacity:0;animation:wordPop .85s var(--spring) both}
+  @keyframes wordPop{0%{opacity:0;transform:translateY(32px) scale(.88)}55%{opacity:1}100%{opacity:1;transform:translateY(0) scale(1)}}
+  /* Glass proof panel keeps its blur: fade only, never transform a blurred surface */
+  .anim.hero-proof{animation-name:heroFade}
+  @keyframes heroFade{from{opacity:0}to{opacity:1}}
+  .hero-mark{animation:markIn 1s var(--spring) .2s both}
   @keyframes markIn{from{opacity:0;transform:scale(.7) rotate(-6deg)}to{opacity:1;transform:none}}
   /* Trust marquee */
   .marquee{
@@ -472,13 +490,13 @@
     transition:color .25s ease;cursor:default;
   }
   .logo-set span:hover{color:#fff}
-  @keyframes marquee{to{transform:translateX(-50%)}}
+  @keyframes marquee{to{transform:translate3d(-50%,0,0)}}
   /* Numbers: orange underline sweep as the band reveals */
   .stat .num{position:relative}
   .stat .num::after{
     content:"";display:block;width:64px;height:3px;border-radius:2px;background:var(--prime);
     margin-top:12px;transform:scaleX(0);transform-origin:left;
-    transition:transform .9s cubic-bezier(.22,.61,.36,1) .15s;
+    transition:transform .9s var(--spring-soft) .15s;
   }
   .numbers-band.in .stat .num::after{transform:scaleX(1)}
   .numbers-band.in .stat:nth-child(2) .num::after{transition-delay:.3s}
@@ -598,29 +616,30 @@
   }
   @keyframes accentShine{0%,55%{background-position:120% 0}92%,100%{background-position:-80% 0}}
   /* Hero primary CTA: repeating shine sweep */
-  .hero-ctas .btn-prime::after{animation:ctaShine 3.5s ease-in-out infinite}
+  .hero-ctas .btn-prime::after{animation:ctaShine 3.6s ease-in-out infinite}
   @keyframes ctaShine{
-    0%,58%{transform:translateX(-190%) skewX(-20deg)}
-    88%,100%{transform:translateX(380%) skewX(-20deg)}
+    0%,55%{transform:translateX(-190%) skewX(-20deg);animation-timing-function:cubic-bezier(.45,0,.25,1)}
+    85%,100%{transform:translateX(380%) skewX(-20deg)}
   }
-  /* Sticky mobile CTA: soft pulsing orange ring */
-  .mobile-cta .btn-prime{animation:ctaPulse 2.8s ease-in-out infinite}
-  @keyframes ctaPulse{
-    0%,100%{box-shadow:0 12px 34px -12px rgba(239,67,3,.65),0 0 0 0 rgba(239,67,3,.45)}
-    55%{box-shadow:0 12px 34px -12px rgba(239,67,3,.65),0 0 0 8px rgba(239,67,3,0)}
+  /* Sticky mobile CTA: pulsing glow ring — pre-rendered shadow on a pseudo layer, opacity-only animation */
+  .mobile-cta .btn-prime::before{
+    content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+    box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.55),inset 0 0 22px rgba(255,190,160,.5),0 0 18px rgba(239,67,3,.5);
+    opacity:0;animation:ctaPulse 2.8s ease-in-out infinite;
   }
+  @keyframes ctaPulse{0%,100%{opacity:0}55%{opacity:.9}}
   /* Section headings: orange underline bar wipes in on reveal */
   .section-title{position:relative}
   .section-title::after{
     content:"";display:block;width:76px;height:4px;border-radius:2px;margin-top:16px;
     background:linear-gradient(90deg,var(--prime),var(--prime-2));
     transform:scaleX(0);transform-origin:left;
-    transition:transform .8s cubic-bezier(.22,.61,.36,1) .2s;
+    transition:transform .85s var(--spring) .2s;
   }
   .section-title.in::after{transform:scaleX(1)}
   #faq .section-title::after{margin-left:auto;margin-right:auto;transform-origin:center}
   /* Numbers: slight scale pop as the count settles */
-  .stat .num.pop{animation:numPop .5s cubic-bezier(.22,.61,.36,1)}
+  .stat .num.pop{animation:numPop .55s var(--spring)}
   @keyframes numPop{0%{transform:scale(1)}40%{transform:scale(1.07)}100%{transform:scale(1)}}
   /* Glass cards: one-time shine sweep as each enters */
   .svc,.pkg,.ins{overflow:hidden}
@@ -643,7 +662,7 @@
   }
   @media (max-width:768px){
     /* Bigger, easier-to-see scroll reveals on phones */
-    .js .reveal{transform:translateY(34px) scale(.96);transition:opacity .75s ease,transform .75s ease}
+    .js .reveal{transform:translateY(34px) scale(.96);transition:opacity .55s ease,transform .85s var(--spring-soft)}
     .js .reveal-l{transform:translateX(-34px)}
     .js .reveal-r{transform:translateX(34px)}
     .js .reveal-scale{transform:scale(.92) translateY(22px)}
@@ -652,7 +671,34 @@
     .reveal.d3{transition-delay:.24s}.reveal.d4{transition-delay:.32s}
     /* Marquee: fast enough to read as motion at a glance */
     .marquee-track{animation-duration:17s}
+    /* Fake glass on phones for cards that move (reveal + hover lift): solid translucent fill, no blur cost */
+    .svc,.pkg{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(255,255,255,.07)}
+    .pkg-grid .pkg:nth-child(3){background:linear-gradient(170deg,rgba(239,67,3,.18),rgba(255,255,255,.06) 62%)}
   }
+
+  /* ---------- Neon touch sweep (transform + opacity only; glow is pre-rendered) ---------- */
+  .svc,.pkg,.ins,.step,.work-card{contain:layout paint}
+  .step,.chip,.ai-tier{overflow:hidden}
+  .chip,.ai-tier{position:relative}
+  nav.main-nav a{overflow:hidden}
+  .neon{
+    position:absolute;top:-30%;bottom:-30%;left:0;width:42%;z-index:3;pointer-events:none;
+    background:linear-gradient(100deg,transparent,rgba(239,67,3,.5) 26%,rgba(255,255,255,.95) 50%,rgba(239,67,3,.5) 74%,transparent);
+    box-shadow:0 0 38px 12px rgba(239,67,3,.45);
+    opacity:0;transform:translate3d(-230%,0,0) skewX(-18deg);
+  }
+  .neon.go{animation:neonSweep .85s cubic-bezier(.45,0,.25,1) both;will-change:transform,opacity}
+  @keyframes neonSweep{
+    0%{opacity:0;transform:translate3d(-230%,0,0) skewX(-18deg)}
+    14%{opacity:1}
+    84%{opacity:1}
+    100%{opacity:0;transform:translate3d(370%,0,0) skewX(-18deg)}
+  }
+  /* Pressed state: instant neon edge glow (state change, never an animated shadow) */
+  .svc:active,.pkg:active,.ins:active,.step:active,.work-card:active,.chip:active,.ai-tier:active,.pkg-grid .pkg:active{
+    box-shadow:inset 0 0 0 1.5px rgba(239,67,3,.8),0 0 28px -4px rgba(239,67,3,.55);
+  }
+  .btn:active{box-shadow:0 0 0 1.5px rgba(239,67,3,.65),0 0 26px -2px rgba(239,67,3,.55)}
 
   /* ---------- Responsive ---------- */
   @media (max-width:1020px){
@@ -699,6 +745,9 @@
     .anim,.hero-mark{opacity:1}
     .marquee-track{animation:none}
     .hero::before,.ai-band::before,.ai-tiers::before{animation:none}
+    .neon{display:none!important}
+    .section-title .w,.hero h1 .w{opacity:1;transform:none;animation:none}
+    .btn.tap{animation:none}
   }
 </style>
 </head>
@@ -1312,6 +1361,59 @@
   "use strict";
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+  /* Word-level split: hero lines + section headings ripple in word by word
+     with spring easing instead of rising as one stiff block. */
+  function splitWords(el, base, step, cap, atomicAccent){
+    var idx = 0;
+    function stamp(span){
+      var d = Math.min(base + idx * step, cap) + "ms";
+      span.style.transitionDelay = d;
+      span.style.animationDelay = d;
+      idx++;
+      return span;
+    }
+    function walk(node){
+      Array.prototype.slice.call(node.childNodes).forEach(function(child){
+        if (child.nodeType === 3) {
+          var frag = document.createDocumentFragment();
+          child.textContent.split(/(\s+)/).forEach(function(part){
+            if (!part) return;
+            if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(" ")); return; }
+            var s = document.createElement("span");
+            s.className = "w";
+            s.textContent = part;
+            frag.appendChild(stamp(s));
+          });
+          node.replaceChild(frag, child);
+        } else if (child.nodeType === 1) {
+          if (atomicAccent && child.classList.contains("accent")) {
+            var w = document.createElement("span");
+            w.className = "w";
+            stamp(w);
+            node.replaceChild(w, child);
+            w.appendChild(child);
+          } else {
+            walk(child);
+          }
+        }
+      });
+    }
+    walk(el);
+    el.classList.add("split");
+  }
+  if (!reduceMotion) {
+    var h1 = document.querySelector(".hero h1");
+    if (h1) {
+      h1.querySelectorAll(".h-line").forEach(function(line, li){
+        splitWords(line, li === 0 ? 140 : 330, 55, 1400, true);
+      });
+      h1.classList.add("words");
+    }
+    document.querySelectorAll(".section-title").forEach(function(t){
+      splitWords(t, 60, 50, 640, false);
+    });
+  }
+
   /* Header shadow + scroll progress on scroll */
   var header = document.getElementById("siteHeader");
   var progress = document.getElementById("scrollProgress");
@@ -1350,7 +1452,19 @@
   /* Reveal on scroll — pre-trigger before entering viewport, with a timed
      fallback so no content can ever stay hidden. */
   var revealEls = document.querySelectorAll(".reveal");
-  function showEl(el){ el.classList.add("in"); }
+  function showEl(el){
+    if (el.classList.contains("in")) return;
+    /* will-change only while the reveal actually animates; removed on transitionend */
+    if (!reduceMotion && !el.classList.contains("split")) {
+      el.style.willChange = "transform, opacity";
+      el.addEventListener("transitionend", function h(ev){
+        if (ev.target !== el) return;
+        el.style.willChange = "";
+        el.removeEventListener("transitionend", h);
+      });
+    }
+    el.classList.add("in");
+  }
   if ("IntersectionObserver" in window && !reduceMotion) {
     var ro = new IntersectionObserver(function(entries){
       entries.forEach(function(e){
@@ -1475,6 +1589,41 @@
     success.classList.add("show");
     success.scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "center"});
   });
+
+  /* Neon sweep + spring tap: passive listeners, never block the tap's action */
+  var neonSel = ".svc, .pkg, .ins, .step, .work-card, .btn, nav.main-nav a, .chip, .ai-tier";
+  function sweep(el){
+    var n = el.querySelector(":scope > .neon");
+    if (!n) {
+      n = document.createElement("span");
+      n.className = "neon";
+      n.setAttribute("aria-hidden", "true");
+      el.appendChild(n);
+    }
+    if (n.classList.contains("go")) { n.classList.remove("go"); void n.offsetWidth; }
+    n.classList.add("go");
+  }
+  if (!reduceMotion) {
+    document.addEventListener("pointerdown", function(e){
+      var t = e.target && e.target.closest ? e.target.closest(neonSel) : null;
+      if (t) sweep(t);
+      var b = e.target && e.target.closest ? e.target.closest(".btn") : null;
+      if (b) { b.classList.remove("tap"); void b.offsetWidth; b.classList.add("tap"); }
+    }, {passive:true});
+    if (window.matchMedia("(hover:hover) and (pointer:fine)").matches) {
+      var lastHover = null;
+      document.addEventListener("mouseover", function(e){
+        var t = e.target && e.target.closest ? e.target.closest(neonSel) : null;
+        if (t !== lastHover) { lastHover = t; if (t) sweep(t); }
+      }, {passive:true});
+    }
+    document.addEventListener("animationend", function(e){
+      var tg = e.target;
+      if (!tg.classList) return;
+      if (tg.classList.contains("neon")) tg.classList.remove("go");
+      if (tg.classList.contains("tap")) tg.classList.remove("tap");
+    });
+  }
 })();
 </script>
 </body>
