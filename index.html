@@ -81,11 +81,53 @@
   .js .section-title.reveal.split{opacity:1;transform:none;transition:none}
   .section-title .w{display:inline-block;opacity:0;transform:translateY(.42em) scale(.9);transition:opacity .4s ease,transform .8s cubic-bezier(.34,1.56,.64,1)}
   .section-title.in .w{opacity:1;transform:translateY(0) scale(1)}
-  .reveal.d1{transition-delay:.08s}.reveal.d2{transition-delay:.16s}.reveal.d3{transition-delay:.24s}.reveal.d4{transition-delay:.32s}
+  .reveal.d1{transition-delay:.05s}.reveal.d2{transition-delay:.1s}.reveal.d3{transition-delay:.15s}.reveal.d4{transition-delay:.2s}
   .js .reveal-l{transform:translateX(-30px)}
   .js .reveal-r{transform:translateX(30px)}
   .js .reveal-scale{transform:scale(.94) translateY(14px)}
   .js .reveal-l.in,.js .reveal-r.in,.js .reveal-scale.in{transform:none}
+
+  /* ---------- Text cascade: every text block springs (gentler than headings) ----------
+     Hidden from first paint by these structural rules (JS tags the same nodes
+     with .tx and toggles .in through the replaying reveal system). Block-level
+     only — no per-letter splitting for body text. Literal beziers throughout. */
+  .js .svc h3,.js .svc p,.js .svc .go,.js .svc .badge-soon,
+  .js .also-row .also-lbl,.js .also-row .chip,
+  .js .work-visual .wname,.js .work-tag,.js .work-body h3,.js .work-body p,
+  .js .work-stats > div,.js .case-toggle,.js .case-detail b,.js .case-detail p,
+  .js .why-item .n,.js .why-item h3,.js .why-item p,
+  .js .step .sn,.js .step h3,.js .step p,
+  .js .ai-band .eyebrow,.js .ai-band h2,.js .ai-band p,.js .ai-tier b,.js .ai-tier span,
+  .js .pkg .pname,.js .pkg .pfor,.js .pkg li,.js .pkg .price-note,
+  .js .ins .cat,.js .ins h3,.js .ins p,.js .ins .go,
+  .js .faq > button,.js .faq .ans p,
+  .js .stat .lbl,
+  .js .contact-facts > div,.js .field,.js .form-foot,.js .form-note,
+  .js .foot-brand p,.js .foot-col h4,.js .foot-col a,.js .foot-col span,.js .foot-bottom span{
+    opacity:0;transform:translateY(16px);
+    transition:opacity .45s ease,transform .7s cubic-bezier(.22,1.28,.36,1);
+  }
+  /* FAQ answers: softer still — mostly a fade, barely a rise */
+  .js .faq .ans p{transform:translateY(8px)}
+  .js .svc h3.in,.js .svc p.in,.js .svc .go.in,.js .svc .badge-soon.in,
+  .js .also-row .also-lbl.in,.js .also-row .chip.in,
+  .js .work-visual .wname.in,.js .work-tag.in,.js .work-body h3.in,.js .work-body p.in,
+  .js .work-stats > div.in,.js .case-toggle.in,.js .case-detail b.in,.js .case-detail p.in,
+  .js .why-item .n.in,.js .why-item h3.in,.js .why-item p.in,
+  .js .step .sn.in,.js .step h3.in,.js .step p.in,
+  .js .ai-band .eyebrow.in,.js .ai-band h2.in,.js .ai-band p.in,.js .ai-tier b.in,.js .ai-tier span.in,
+  .js .pkg .pname.in,.js .pkg .pfor.in,.js .pkg li.in,.js .pkg .price-note.in,
+  .js .ins .cat.in,.js .ins h3.in,.js .ins p.in,.js .ins .go.in,
+  .js .faq > button.in,.js .faq .ans p.in,
+  .js .stat .lbl.in,
+  .js .contact-facts > div.in,.js .field.in,.js .form-foot.in,.js .form-note.in,
+  .js .foot-brand p.in,.js .foot-col h4.in,.js .foot-col a.in,.js .foot-col span.in,.js .foot-bottom span.in{
+    opacity:1;transform:none;
+  }
+  /* Hero replay: entrance animations disarm once the hero has fully left the
+     viewport, so returning to the top replays them from the first frame. */
+  .hero.hero-off .anim,.hero.hero-off .hero-mark{animation:none;opacity:0}
+  .hero.hero-off h1 .w{animation:none;opacity:0}
 
   /* ---------- Header ---------- */
   header{
@@ -292,8 +334,8 @@
   .ai-band{
     border-radius:26px;padding:clamp(36px,5vw,64px);position:relative;overflow:hidden;
     background:
-      radial-gradient(700px 420px at 100% 0%,rgba(239,67,3,.55),rgba(239,67,3,0) 60%),
-      radial-gradient(560px 380px at 0% 110%,rgba(245,99,33,.35),rgba(245,99,33,0) 60%),
+      radial-gradient(700px 420px at 100% 0%,rgba(239,67,3,.62),rgba(239,67,3,0) 60%),
+      radial-gradient(560px 380px at 0% 110%,rgba(245,99,33,.42),rgba(245,99,33,0) 60%),
       linear-gradient(150deg,#200a03,#0B0503 70%);
     border:1px solid rgba(245,99,33,.35);
   }
@@ -448,7 +490,7 @@
   .btn-ghost:hover::before{transform:scaleX(1)}
   .btn-prime::after{
     content:"";position:absolute;top:0;bottom:0;left:0;width:45%;pointer-events:none;
-    background:linear-gradient(100deg,transparent,rgba(239,67,3,.4) 25%,rgba(255,255,255,.95) 50%,rgba(239,67,3,.4) 75%,transparent);
+    background:linear-gradient(100deg,transparent,rgba(239,67,3,.22) 25%,rgba(255,255,255,.5) 50%,rgba(239,67,3,.22) 75%,transparent);
     transform:translateX(-190%) skewX(-20deg);transition:transform .6s ease;
   }
   .btn-prime:hover::after{transform:translateX(380%) skewX(-20deg)}
@@ -463,8 +505,8 @@
   @keyframes heroDrift{from{transform:translate3d(-4%,-2%,0) scale(1)}to{transform:translate3d(4%,3%,0) scale(1.1)}}
   .hero .wrap{position:relative;z-index:1}
   .anim{opacity:0;animation:heroUp .9s cubic-bezier(.22,1.28,.36,1) both}
-  .a1{animation-delay:.05s}.a2{animation-delay:.16s}.a3{animation-delay:.29s}
-  .a4{animation-delay:.46s}.a5{animation-delay:.62s}.a6{animation-delay:.78s}.a7{animation-delay:.94s}
+  .a1{animation-delay:.04s}.a2{animation-delay:.12s}.a3{animation-delay:.2s}
+  .a4{animation-delay:.3s}.a5{animation-delay:.4s}.a6{animation-delay:.48s}.a7{animation-delay:.56s}
   @keyframes heroUp{from{opacity:0;transform:translateY(34px)}to{opacity:1;transform:none}}
   .h-line{display:block}
   /* Hero headline: word-level spring pop (JS wraps words; line animation disabled once split) */
@@ -621,18 +663,18 @@
   }
   @keyframes accentShine{0%,55%{background-position:120% 0}92%,100%{background-position:-80% 0}}
   /* Hero primary CTA: repeating shine sweep */
-  .hero-ctas .btn-prime::after{animation:ctaShine 3.6s ease-in-out infinite}
+  .hero-ctas .btn-prime::after{animation:ctaShine 5.6s ease-in-out infinite}
   @keyframes ctaShine{
-    0%,55%{transform:translateX(-190%) skewX(-20deg);animation-timing-function:cubic-bezier(.45,0,.25,1)}
-    85%,100%{transform:translateX(380%) skewX(-20deg)}
+    0%,68%{transform:translateX(-190%) skewX(-20deg);animation-timing-function:cubic-bezier(.45,0,.25,1)}
+    96%,100%{transform:translateX(380%) skewX(-20deg)}
   }
   /* Sticky mobile CTA: pulsing glow ring — pre-rendered shadow on a pseudo layer, opacity-only animation */
   .mobile-cta .btn-prime::before{
     content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
-    box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.55),inset 0 0 22px rgba(255,190,160,.5),0 0 18px rgba(239,67,3,.5);
+    box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.35),inset 0 0 22px rgba(255,190,160,.3),0 0 18px rgba(239,67,3,.3);
     opacity:0;animation:ctaPulse 2.8s ease-in-out infinite;
   }
-  @keyframes ctaPulse{0%,100%{opacity:0}55%{opacity:.9}}
+  @keyframes ctaPulse{0%,100%{opacity:0}55%{opacity:.55}}
   /* Section headings: orange underline bar wipes in on reveal */
   .section-title{position:relative}
   .section-title::after{
@@ -672,8 +714,8 @@
     .js .reveal-r{transform:translateX(34px)}
     .js .reveal-scale{transform:scale(.92) translateY(22px)}
     .js .reveal.in{transform:none}
-    .reveal.d1{transition-delay:.08s}.reveal.d2{transition-delay:.16s}
-    .reveal.d3{transition-delay:.24s}.reveal.d4{transition-delay:.32s}
+    .reveal.d1{transition-delay:.05s}.reveal.d2{transition-delay:.1s}
+    .reveal.d3{transition-delay:.15s}.reveal.d4{transition-delay:.2s}
     /* Marquee: fast enough to read as motion at a glance */
     .marquee-track{animation-duration:17s}
     /* Fake glass on phones for cards that move (reveal + hover lift): solid translucent fill, no blur cost */
@@ -687,23 +729,59 @@
   .chip,.ai-tier{position:relative}
   nav.main-nav a{overflow:hidden}
   .neon{
-    position:absolute;top:-30%;bottom:-30%;left:0;width:42%;z-index:3;pointer-events:none;
-    background:linear-gradient(100deg,transparent,rgba(239,67,3,.5) 26%,rgba(255,255,255,.95) 50%,rgba(239,67,3,.5) 74%,transparent);
-    box-shadow:0 0 38px 12px rgba(239,67,3,.45);
-    opacity:0;transform:translate3d(-230%,0,0) skewX(-18deg);
+    position:absolute;top:-30%;bottom:-30%;left:0;width:30%;z-index:3;pointer-events:none;
+    background:linear-gradient(100deg,transparent,rgba(239,67,3,.3) 28%,rgba(255,216,196,.5) 50%,rgba(239,67,3,.3) 72%,transparent);
+    box-shadow:0 0 18px 5px rgba(239,67,3,.16);
+    opacity:0;transform:translate3d(-260%,0,0) skewX(-18deg);
   }
-  .neon.go{animation:neonSweep .85s cubic-bezier(.45,0,.25,1) both;will-change:transform,opacity}
+  .neon.go{animation:neonSweep 1.05s cubic-bezier(.45,0,.25,1) both;will-change:transform,opacity}
   @keyframes neonSweep{
-    0%{opacity:0;transform:translate3d(-230%,0,0) skewX(-18deg)}
-    14%{opacity:1}
-    84%{opacity:1}
-    100%{opacity:0;transform:translate3d(370%,0,0) skewX(-18deg)}
+    0%{opacity:0;transform:translate3d(-260%,0,0) skewX(-18deg)}
+    16%{opacity:.75}
+    82%{opacity:.75}
+    100%{opacity:0;transform:translate3d(430%,0,0) skewX(-18deg)}
   }
   /* Pressed state: instant neon edge glow (state change, never an animated shadow) */
   .svc:active,.pkg:active,.ins:active,.step:active,.work-card:active,.chip:active,.ai-tier:active,.pkg-grid .pkg:active{
-    box-shadow:inset 0 0 0 1.5px rgba(239,67,3,.8),0 0 28px -4px rgba(239,67,3,.55);
+    box-shadow:inset 0 0 0 1.5px rgba(239,67,3,.55),0 0 24px -4px rgba(239,67,3,.3);
   }
-  .btn:active{box-shadow:0 0 0 1.5px rgba(239,67,3,.65),0 0 26px -2px rgba(239,67,3,.55)}
+  .btn:active{box-shadow:0 0 0 1.5px rgba(239,67,3,.45),0 0 22px -2px rgba(239,67,3,.3)}
+
+  /* ---------- Brand gradient backgrounds ----------
+     Two fixed, pre-rendered glow layers crossfade by opacity only (22s) so the
+     backdrop feels alive without repaint jank; sections add their own painted,
+     statically-anchored ember glows. Brand family only: #EF4303 / #F56321 /
+     deep browns / black. Glow alpha behind body text stays low for AA contrast. */
+  body::before,body::after{content:"";position:fixed;inset:0;z-index:0;pointer-events:none}
+  body::before{background:
+    radial-gradient(900px 620px at 88% -6%,rgba(239,67,3,.15),rgba(239,67,3,0) 60%),
+    radial-gradient(760px 560px at -14% 34%,rgba(245,99,33,.09),rgba(245,99,33,0) 62%),
+    radial-gradient(820px 640px at 108% 74%,rgba(239,67,3,.09),rgba(239,67,3,0) 60%)}
+  body::after{background:
+    radial-gradient(820px 600px at 6% 12%,rgba(245,99,33,.11),rgba(245,99,33,0) 60%),
+    radial-gradient(900px 640px at 96% 56%,rgba(239,67,3,.11),rgba(239,67,3,0) 62%),
+    radial-gradient(760px 560px at 30% 108%,rgba(239,67,3,.08),rgba(239,67,3,0) 60%);
+    opacity:.35;animation:bgCross 22s ease-in-out infinite alternate;will-change:opacity}
+  @keyframes bgCross{from{opacity:.3}to{opacity:.85}}
+  main,footer{position:relative;z-index:1}
+  #services{background:
+    radial-gradient(760px 520px at -12% 22%,rgba(239,67,3,.12),rgba(239,67,3,0) 60%),
+    radial-gradient(680px 480px at 112% 78%,rgba(245,99,33,.07),rgba(245,99,33,0) 60%)}
+  #about{background:radial-gradient(700px 500px at -10% 0%,rgba(245,99,33,.09),rgba(245,99,33,0) 55%)}
+  .process-sec{background:radial-gradient(720px 480px at 110% 30%,rgba(239,67,3,.09),rgba(239,67,3,0) 60%)}
+  #packages{background:radial-gradient(860px 420px at 50% -12%,rgba(245,99,33,.13),rgba(245,99,33,0) 62%)}
+  #insights{background:radial-gradient(700px 500px at -12% 60%,rgba(239,67,3,.08),rgba(239,67,3,0) 60%)}
+  #faq{background:radial-gradient(760px 460px at 50% 0%,rgba(239,67,3,.06),rgba(239,67,3,0) 60%)}
+  .work-sec{background:
+    radial-gradient(760px 560px at 112% 12%,rgba(239,67,3,.14),rgba(239,67,3,0) 60%),
+    linear-gradient(180deg,var(--bg) 0%,#0e0402 50%,var(--bg) 100%)}
+  .contact-sec{background:
+    radial-gradient(900px 540px at 102% -6%,rgba(239,67,3,.48),rgba(239,67,3,0) 62%),
+    radial-gradient(720px 520px at -8% 108%,rgba(245,99,33,.22),rgba(245,99,33,0) 60%),
+    linear-gradient(168deg,#1e0a03,var(--bg) 68%)}
+  footer{background:
+    radial-gradient(700px 380px at 50% -30%,rgba(239,67,3,.08),rgba(239,67,3,0) 60%),
+    #070302}
 
   /* ---------- Responsive ---------- */
   @media (max-width:1020px){
@@ -751,6 +829,8 @@
     .marquee-track{animation:none}
     .hero::before,.ai-band::before,.ai-tiers::before{animation:none}
     .neon{display:none!important}
+    body::after{animation:none;opacity:.5}
+    .js .tx{opacity:1!important;transform:none!important}
     .section-title .w,.hero h1 .w{opacity:1;transform:none;animation:none}
     .btn.tap{animation:none}
   }
@@ -1042,7 +1122,7 @@
 </section>
 
 <!-- ================= PROCESS ================= -->
-<section class="section-pad" style="padding-top:0">
+<section class="section-pad process-sec" style="padding-top:0">
   <div class="wrap">
     <span class="eyebrow reveal">How we work</span>
     <h2 class="section-title reveal d1">A process with <span class="accent">no gaps</span></h2>
@@ -1410,7 +1490,7 @@
     var h1 = document.querySelector(".hero h1");
     if (h1) {
       h1.querySelectorAll(".h-line").forEach(function(line, li){
-        splitWords(line, li === 0 ? 140 : 330, 55, 1400, true);
+        splitWords(line, li === 0 ? 120 : 300, 50, 1000, true);
       });
       h1.classList.add("words");
     }
@@ -1458,9 +1538,28 @@
   });
   menu.querySelectorAll("a").forEach(function(a){ a.addEventListener("click", closeMenu); });
 
-  /* Reveal on scroll — pre-trigger before entering viewport, with a timed
-     fallback so no content can ever stay hidden. */
-  var revealEls = document.querySelectorAll(".reveal");
+  /* Text cascade tagging: every text block joins the reveal system as .tx.
+     The CSS structural rules above already hide them from first paint; here we
+     only tag them and assign the intra-group stagger (title first, then its
+     lines follow) by order within each parent group — tens of ms per step. */
+  var TX_SEL = ".svc h3,.svc p,.svc .go,.svc .badge-soon,.also-row .also-lbl,.also-row .chip,.work-visual .wname,.work-tag,.work-body h3,.work-body p,.work-stats > div,.case-toggle,.case-detail b,.case-detail p,.why-item .n,.why-item h3,.why-item p,.step .sn,.step h3,.step p,.ai-band .eyebrow,.ai-band h2,.ai-band p,.ai-tier b,.ai-tier span,.pkg .pname,.pkg .pfor,.pkg li,.pkg .price-note,.ins .cat,.ins h3,.ins p,.ins .go,.faq > button,.faq .ans p,.stat .lbl,.contact-facts > div,.field,.form-foot,.form-note,.foot-brand p,.foot-col h4,.foot-col a,.foot-col span,.foot-bottom span";
+  var txEls = document.querySelectorAll(TX_SEL);
+  txEls.forEach(function(el){ el.classList.add("tx"); });
+  var groupCount = new Map();
+  txEls.forEach(function(el){
+    var p = el.parentElement;
+    var i = groupCount.get(p) || 0;
+    groupCount.set(p, i + 1);
+    el.style.transitionDelay = Math.min(i * 70, 420) + "ms";
+  });
+
+  /* Reveal system — REPLAYING. A block springs in the moment it genuinely
+     enters the viewport (12% visible past a -12% bottom margin) and resets to
+     its hidden state only once it has FULLY left the viewport, so scrolling
+     back replays the spring in both directions. The gap between the two
+     triggers is the hysteresis dead-zone: no flicker at the boundary, and a
+     block that is on screen is always in its shown state. */
+  var animEls = document.querySelectorAll(".reveal, .tx");
   function showEl(el){
     if (el.classList.contains("in")) return;
     /* will-change only while the reveal actually animates; removed on transitionend */
@@ -1474,28 +1573,30 @@
     }
     el.classList.add("in");
   }
+  function hideEl(el){ el.classList.remove("in"); }
   if ("IntersectionObserver" in window && !reduceMotion) {
-    var ro = new IntersectionObserver(function(entries){
+    var enterObs = new IntersectionObserver(function(entries){
       entries.forEach(function(e){
-        if (e.isIntersecting) { showEl(e.target); ro.unobserve(e.target); }
+        if (e.isIntersecting) showEl(e.target);
       });
     }, {threshold:.12, rootMargin:"0px 0px -12% 0px"});
-    revealEls.forEach(function(el){ ro.observe(el); });
-    /* Backup proximity pass (WebKit / in-app webview safety): anything at or
-       near the viewport is revealed through the same .in class, so it plays
-       the same spring transition instead of snapping visible. It never
-       pre-reveals the whole page, so scroll-triggered motion still happens
-       for everything further down. */
+    var exitObs = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (!e.isIntersecting) hideEl(e.target);
+      });
+    }, {threshold:0});
+    animEls.forEach(function(el){ enterObs.observe(el); exitObs.observe(el); });
+    /* Backup proximity pass (WebKit / in-app webview safety): anything actually
+       on screen is shown through the same .in class, so it plays the same
+       spring transition instead of snapping visible. Show-only — the exit
+       observer owns resetting — and nothing below the fold is pre-revealed. */
     var nearTick = false;
     function nearPass(){
       var limit = window.innerHeight * 0.92;
-      revealEls.forEach(function(el){
+      animEls.forEach(function(el){
         if (el.classList.contains("in")) return;
         var r = el.getBoundingClientRect();
-        /* Rescue only what the reader has genuinely reached: already in view
-           (same .in class, so the same spring transition plays), or already
-           scrolled past. Nothing below the fold is pre-revealed. */
-        if ((r.top < limit && r.bottom > 0) || r.bottom <= 0) showEl(el);
+        if (r.top < limit && r.bottom > 0) showEl(el);
       });
     }
     function nearSoon(){
@@ -1509,7 +1610,20 @@
     setTimeout(nearPass, 1400);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(nearPass);
   } else {
-    revealEls.forEach(showEl);
+    animEls.forEach(showEl);
+  }
+
+  /* Hero entrance replay: once the hero has fully left the viewport, disarm
+     its entrance animations (CSS .hero-off); returning to the top replays
+     them. Threshold 0, so a partially visible hero is never disarmed. */
+  var heroSec = document.querySelector(".hero");
+  if (heroSec && "IntersectionObserver" in window && !reduceMotion) {
+    var heroObs = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        heroSec.classList.toggle("hero-off", !e.isIntersecting);
+      });
+    }, {threshold:0});
+    heroObs.observe(heroSec);
   }
 
   /* Animated counters */
@@ -1517,7 +1631,7 @@
     var target = parseFloat(el.getAttribute("data-target"));
     var decimals = parseInt(el.getAttribute("data-decimals") || "0", 10);
     if (reduceMotion) { el.textContent = target.toFixed(decimals); return; }
-    var dur = 1400, start = null;
+    var dur = 1200, start = null;
     function frame(ts){
       if (!start) start = ts;
       var p = Math.min((ts - start) / dur, 1);
@@ -1540,10 +1654,21 @@
   if ("IntersectionObserver" in window) {
     var co = new IntersectionObserver(function(entries){
       entries.forEach(function(e){
-        if (e.isIntersecting) { finishCount(e.target); co.unobserve(e.target); }
+        if (e.isIntersecting) finishCount(e.target);
       });
     }, {threshold:.2, rootMargin:"0px 0px -8% 0px"});
     counters.forEach(function(el){ co.observe(el); });
+    /* Replay: once a counter has fully left the viewport it re-arms, so the
+       count-up (and the settle pop) plays again on the next pass. */
+    var coExit = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (!e.isIntersecting) {
+          e.target.removeAttribute("data-done");
+          if (e.target.parentElement) e.target.parentElement.classList.remove("pop");
+        }
+      });
+    }, {threshold:0});
+    counters.forEach(function(el){ coExit.observe(el); });
     /* Same proximity backup for counters: any counter the reader has reached
        finishes through the normal animated count-up path (never pre-run for
        counters still far below the fold). */
@@ -1599,6 +1724,7 @@
         item.classList.add("open");
         ans.style.maxHeight = ans.scrollHeight + "px";
         btn.setAttribute("aria-expanded","true");
+        ans.querySelectorAll(".tx").forEach(showEl);
       }
     });
   });
@@ -1611,6 +1737,7 @@
     btn.addEventListener("click", function(){
       var open = card.classList.toggle("open");
       detail.style.maxHeight = open ? detail.scrollHeight + "px" : "0px";
+      if (open) detail.querySelectorAll(".tx").forEach(showEl);
       btn.setAttribute("aria-expanded", open ? "true" : "false");
       btn.firstChild.textContent = open ? "Hide case detail " : "View case detail ";
     });
