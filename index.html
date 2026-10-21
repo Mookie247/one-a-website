@@ -297,6 +297,22 @@
   }
   .brand-card.active .bc-plus{transform:rotate(45deg)}
   .brand-panels{margin-top:20px}
+
+  /* ---------- Motion pack: card sheen + panel progress ---------- */
+  .brand-card::after{
+    content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+    background:radial-gradient(340px circle at var(--mx,50%) var(--my,50%),rgba(239,67,3,.16),rgba(239,67,3,0) 65%);
+    opacity:0;transition:opacity .35s ease;
+  }
+  .brand-card:hover::after{opacity:1}
+  .bp-head{position:relative}
+  .bp-head::after{
+    content:"";position:absolute;left:0;bottom:-1px;height:2px;width:100%;
+    background:linear-gradient(90deg,var(--prime),rgba(239,67,3,0));
+    transform:scaleX(0);transform-origin:left;
+  }
+  .brand-panel.active .bp-head::after{animation:bpBar 1s cubic-bezier(.22,1.28,.36,1) .1s both}
+  @keyframes bpBar{from{transform:scaleX(0)}to{transform:scaleX(1)}}
   .brand-panel{
     display:none;border:1px solid var(--line);border-radius:var(--radius);
     background:linear-gradient(140deg,rgba(239,67,3,.12),rgba(255,255,255,.02) 55%),var(--bg-2);
@@ -1947,12 +1963,102 @@
           p.classList.remove("active");
           void p.offsetWidth;
           p.classList.add("active");
+          countPanelStat(p);
+          p.classList.add("was-open");
         } else {
           p.classList.remove("active");
         }
       });
     });
   });
+
+
+  /* Motion pack: ghost-text parallax, brand-card tilt + sheen tracking,
+     magnetic buttons, panel stat count-up. All transform/opacity, rAF-throttled,
+     pointer-fine only, and fully skipped under reduced motion. */
+  if (!reduceMotion) {
+    /* Ghost text drifts sideways as the brands section crosses the viewport */
+    var ghost = document.querySelector(".ghost-text");
+    var brandsSec = document.getElementById("brands");
+    if (ghost && brandsSec) {
+      var gTick = false;
+      function ghostPass(){
+        var r = brandsSec.getBoundingClientRect();
+        var p = (window.innerHeight - r.top) / (window.innerHeight + r.height);
+        p = Math.max(0, Math.min(1, p));
+        var shift = (p - 0.5) * 90;
+        ghost.style.transform = "translateX(calc(-50% + " + shift.toFixed(1) + "px))";
+      }
+      function ghostSoon(){
+        if (gTick) return;
+        gTick = true;
+        requestAnimationFrame(function(){ gTick = false; ghostPass(); });
+      }
+      window.addEventListener("scroll", ghostSoon, {passive:true});
+      window.addEventListener("resize", ghostSoon);
+      ghostPass();
+    }
+
+    if (window.matchMedia("(hover:hover) and (pointer:fine)").matches) {
+      /* Brand cards: gentle 3D tilt toward the cursor + sheen follows it */
+      document.querySelectorAll(".brand-card").forEach(function(card){
+        card.addEventListener("pointermove", function(e){
+          var r = card.getBoundingClientRect();
+          var px = (e.clientX - r.left) / r.width;
+          var py = (e.clientY - r.top) / r.height;
+          card.style.setProperty("--mx", (px * 100).toFixed(1) + "%");
+          card.style.setProperty("--my", (py * 100).toFixed(1) + "%");
+          card.style.transform = "perspective(720px) rotateX(" + ((0.5 - py) * 7).toFixed(2) + "deg) rotateY(" + ((px - 0.5) * 9).toFixed(2) + "deg) translateY(-4px)";
+        });
+        card.addEventListener("pointerleave", function(){ card.style.transform = ""; });
+      });
+      /* Magnetic pull on the main CTAs */
+      document.querySelectorAll(".hero .btn, header .btn").forEach(function(b){
+        b.addEventListener("pointermove", function(e){
+          var r = b.getBoundingClientRect();
+          var dx = (e.clientX - r.left - r.width / 2) / r.width;
+          var dy = (e.clientY - r.top - r.height / 2) / r.height;
+          b.style.transform = "translate(" + (dx * 10).toFixed(1) + "px," + (dy * 7 - 2).toFixed(1) + "px)";
+        });
+        b.addEventListener("pointerleave", function(){ b.style.transform = ""; });
+      });
+    }
+  }
+
+  /* Panel stat count-up: runs each time a brand panel is shown */
+  function countPanelStat(panel){
+    var b = panel ? panel.querySelector(".bp-stat b") : null;
+    if (!b) return;
+    if (b.getAttribute("data-counted") === "1" && panel.classList.contains("was-open")) return;
+    var finalHTML = b.getAttribute("data-final") || b.innerHTML;
+    b.setAttribute("data-final", finalHTML);
+    var plain = b.textContent.replace(/,/g, "");
+    var m = plain.match(/([\d.]+)/);
+    if (!m || reduceMotion) { b.innerHTML = finalHTML; return; }
+    var target = parseFloat(m[1]);
+    var decimals = m[1].indexOf(".") >= 0 ? 1 : 0;
+    var suffix = plain.slice(m.index + m[1].length);
+    var dur = 900, start = null;
+    function frame(ts){
+      if (!start) start = ts;
+      var p = Math.min((ts - start) / dur, 1);
+      var eased = 1 - Math.pow(1 - p, 3);
+      b.textContent = (target * eased).toFixed(decimals) + suffix;
+      if (p < 1) requestAnimationFrame(frame);
+      else { b.innerHTML = finalHTML; b.setAttribute("data-counted", "1"); }
+    }
+    requestAnimationFrame(frame);
+  }
+
+  var firstPanel = document.querySelector(".brand-panel.active");
+  if (firstPanel && "IntersectionObserver" in window) {
+    var fpObs = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) { countPanelStat(firstPanel); fpObs.disconnect(); }
+      });
+    }, {threshold:.25});
+    fpObs.observe(firstPanel);
+  } else if (firstPanel) { countPanelStat(firstPanel); }
 
   /* Brief form (front-end demo) */
   var form = document.getElementById("briefForm");
