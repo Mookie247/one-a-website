@@ -109,6 +109,7 @@
   .js .team-card h3,.js .team-card .team-role,.js .team-card .team-bg,.js .team-card p,
   .js .core-card b,.js .core-card span,.js .talent-lbl,.js .talent-chip,.js .talent-note,
   .js .trust-name,.js .suite-chip,.js .paid-grid > div,
+  .js .vid-brand,.js .vid-title,.js .vid-detail,
   .js .section-lede,.js .eyebrow,.js .pkg-note,.js .contact-intro{
     opacity:0;transform:translateY(16px);
     transition:opacity .45s ease,transform .7s cubic-bezier(.22,1.28,.36,1);
@@ -133,6 +134,7 @@
   .js .team-card h3.in,.js .team-card .team-role.in,.js .team-card .team-bg.in,.js .team-card p.in,
   .js .core-card b.in,.js .core-card span.in,.js .talent-lbl.in,.js .talent-chip.in,.js .talent-note.in,
   .js .trust-name.in,.js .suite-chip.in,.js .paid-grid > div.in,
+  .js .vid-brand.in,.js .vid-title.in,.js .vid-detail.in,
   .js .section-lede.in,.js .eyebrow.in,.js .pkg-note.in,.js .contact-intro.in{
     opacity:1;transform:none;
   }
@@ -649,16 +651,16 @@
   .numbers-band.in .stat:nth-child(3) .num::after{transition-delay:.45s}
   .numbers-band.in .stat:nth-child(4) .num::after{transition-delay:.6s}
   /* Cards: orange top-border sweep + soft lift shadow */
-  .svc,.pkg,.ins,.step,.work-card,.mv-card,.value-card,.team-card,.core-card,.ind-chip{position:relative}
-  .svc::before,.pkg::before,.ins::before,.step::before,.work-card::before,
+  .svc,.pkg,.ins,.step,.work-card,.vid-card,.mv-card,.value-card,.team-card,.core-card,.ind-chip{position:relative}
+  .svc::before,.pkg::before,.ins::before,.step::before,.work-card::before,.vid-card::before,
   .mv-card::before,.value-card::before,.team-card::before,.core-card::before,.ind-chip::before{
     content:"";position:absolute;top:0;left:0;right:0;height:3px;z-index:2;
     border-radius:3px 3px 0 0;background:linear-gradient(90deg,var(--prime),var(--prime-2));
     transform:scaleX(0);transform-origin:left;transition:transform .45s ease;
   }
-  .svc:hover::before,.pkg:hover::before,.ins:hover::before,.step:hover::before,.work-card:hover::before,
+  .svc:hover::before,.pkg:hover::before,.ins:hover::before,.step:hover::before,.work-card:hover::before,.vid-card:hover::before,
   .mv-card:hover::before,.value-card:hover::before,.team-card:hover::before,.core-card:hover::before,.ind-chip:hover::before{transform:scaleX(1)}
-  .svc:hover,.pkg:hover,.ins:hover,.step:hover,.work-card:hover,.mv-card:hover,.value-card:hover,.team-card:hover{box-shadow:0 26px 48px -24px rgba(0,0,0,.75)}
+  .svc:hover,.pkg:hover,.ins:hover,.step:hover,.work-card:hover,.vid-card:hover,.mv-card:hover,.value-card:hover,.team-card:hover{box-shadow:0 26px 48px -24px rgba(0,0,0,.75)}
   /* AI spotlight: shine sweep + pulsing glow behind tiers */
   .ai-band::before{
     content:"";position:absolute;inset:0;pointer-events:none;
@@ -791,12 +793,12 @@
   @keyframes numPop{0%{transform:scale(1)}40%{transform:scale(1.07)}100%{transform:scale(1)}}
   /* Glass cards: one-time shine sweep as each enters */
   .svc,.pkg,.ins,.mv-card,.value-card,.team-card,.core-card,.ind-chip{overflow:hidden}
-  .svc::after,.pkg::after,.ins::after,.mv-card::after,.value-card::after,.team-card::after{
+  .svc::after,.pkg::after,.ins::after,.vid-card::after,.mv-card::after,.value-card::after,.team-card::after{
     content:"";position:absolute;inset:0;pointer-events:none;z-index:1;
     background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.11) 50%,transparent 65%);
     transform:translateX(-130%);opacity:0;
   }
-  .svc.in::after,.pkg.in::after,.ins.in::after,.mv-card.in::after,.value-card.in::after,.team-card.in::after{animation:cardShine 1s ease .15s 1 both}
+  .svc.in::after,.pkg.in::after,.ins.in::after,.vid-card.in::after,.mv-card.in::after,.value-card.in::after,.team-card.in::after{animation:cardShine 1s ease .15s 1 both}
   @keyframes cardShine{
     0%{transform:translateX(-130%);opacity:0}
     15%{opacity:1}
@@ -825,7 +827,7 @@
   }
 
   /* ---------- Neon touch sweep (transform + opacity only; glow is pre-rendered) ---------- */
-  .svc,.pkg,.ins,.step,.work-card,.mv-card,.value-card,.team-card,.core-card,.ind-chip{contain:layout paint}
+  .svc,.pkg,.ins,.step,.work-card,.vid-card,.mv-card,.value-card,.team-card,.core-card,.ind-chip{contain:layout paint}
   .step,.chip,.ai-tier{overflow:hidden}
   .chip,.ai-tier{position:relative}
   nav.main-nav a{overflow:hidden}
@@ -985,9 +987,33 @@
   .contact-facts a:hover{color:var(--prime-2)}
   .form-success a{color:#ffb59a;text-decoration:underline;text-underline-offset:2px}
 
+  /* ---------- Video Portfolio ---------- */
+  #videos{background:radial-gradient(760px 520px at 110% 30%,rgba(239,67,3,.10),rgba(239,67,3,0) 62%)}
+  .vid-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:28px}
+  .vid-grid--reels{grid-template-columns:repeat(4,1fr)}
+  .vid-card{
+    border-radius:var(--radius);border:1px solid var(--line);overflow:hidden;
+    background:var(--bg-2);display:flex;flex-direction:column;
+    transition:transform .45s cubic-bezier(.22,1.28,.36,1),border-color .25s ease;
+  }
+  .vid-card:hover{transform:translateY(-6px);border-color:rgba(245,99,33,.55)}
+  .vid-media{position:relative;background:#000}
+  .vid-media video{display:block;width:100%;height:auto;background:#000}
+  .vid-dur{
+    position:absolute;right:12px;bottom:12px;z-index:2;
+    background:rgba(0,0,0,.72);color:#fff;border:1px solid rgba(255,255,255,.22);
+    border-radius:999px;padding:4px 11px;font-size:.78rem;font-weight:700;letter-spacing:.04em;
+  }
+  .vid-body{padding:24px;display:flex;flex-direction:column;gap:8px;flex:1}
+  .vid-brand{font-size:.72rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--prime-2)}
+  .vid-title{font-size:1.12rem;font-weight:700;line-height:1.35}
+  .vid-detail{color:var(--muted);font-size:.92rem;flex:1}
+
   /* ---------- Responsive ---------- */
   @media (max-width:1020px){
     .svc-grid,.work-grid,.ins-grid{grid-template-columns:repeat(2,1fr)}
+    .vid-grid{grid-template-columns:repeat(2,1fr)}
+    .vid-grid--reels{grid-template-columns:repeat(3,1fr)}
     .pkg-grid{grid-template-columns:repeat(2,1fr)}
     .process-grid{grid-template-columns:repeat(3,1fr)}
     .numbers-band{grid-template-columns:repeat(2,1fr)}
@@ -1016,9 +1042,12 @@
     .core-grid,.ind-grid{grid-template-columns:repeat(2,1fr)}
     .paid-grid{grid-template-columns:repeat(3,1fr)}
     .svc-wide{flex-direction:column;align-items:flex-start;gap:14px}
+    .vid-grid--reels{grid-template-columns:repeat(2,1fr)}
   }
   @media (max-width:560px){
     .svc-grid,.work-grid,.ins-grid,.pkg-grid{grid-template-columns:1fr}
+    .vid-grid{grid-template-columns:1fr}
+    .vid-grid--reels{grid-template-columns:repeat(2,1fr)}
     .process-grid{grid-template-columns:1fr 1fr}
     .numbers-band{grid-template-columns:1fr}
     .stat{border-left:none;border-top:1px solid var(--line)}
@@ -1063,6 +1092,7 @@
     <nav class="main-nav" aria-label="Main navigation">
       <a href="#services">Services</a>
       <a href="#work">Work</a>
+      <a href="#videos">Videos</a>
       <a href="#about">About</a>
       <a href="#team">Team</a>
       <a href="#packages">Packages</a>
@@ -1078,6 +1108,7 @@
 <div class="mobile-menu" id="mobileMenu">
   <a href="#services">Services</a>
   <a href="#work">Work</a>
+  <a href="#videos">Videos</a>
   <a href="#about">About</a>
   <a href="#team">Team</a>
   <a href="#packages">Packages</a>
@@ -1421,6 +1452,155 @@
     </div>
     <div class="center-cta reveal">
       <a class="btn btn-ghost" href="#contact">Your brand could be next <span class="arr">→</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= VIDEO PORTFOLIO ================= -->
+<section class="section-pad" id="videos">
+  <div class="wrap">
+    <span class="eyebrow reveal">Motion &amp; reels</span>
+    <h2 class="section-title reveal d1">Video <span class="accent">Portfolio</span></h2>
+    <p class="section-lede reveal d2">Motion posts, reels and event films from the ONE.A portfolio — tap to play.</p>
+
+    <h3 class="subhead">Motion <span class="accent">Graphics</span></h3>
+    <p class="subhead-note">1080 × 1350 · 4:5 · 6 videos</p>
+    <div class="vid-grid">
+      <article class="vid-card reveal">
+        <div class="vid-media">
+          <video controls playsinline preload="none" poster="media/motion-post-1.jpg" style="aspect-ratio:4/5" aria-label="ANSTY — Karaoke Speakers, Summer Mood (12 seconds)">
+            <source src="media/motion-post-1.mp4" type="video/mp4" />
+          </video>
+          <span class="vid-dur">12s</span>
+        </div>
+        <div class="vid-body">
+          <span class="vid-brand">ANSTY</span>
+          <h3 class="vid-title">Karaoke Speakers — Summer Mood</h3>
+          <p class="vid-detail">RGB karaoke speakers and microphones on wooden stumps in a summer scene, closing on the ANSTY mood line.</p>
+        </div>
+      </article>
+      <article class="vid-card reveal d1">
+        <div class="vid-media">
+          <video controls playsinline preload="none" poster="media/ansty-motion-post-18.jpg" style="aspect-ratio:4/5" aria-label="ANSTY — The ANSTY Aurora, Teaser (18 seconds)">
+            <source src="media/ansty-motion-post-18.mp4" type="video/mp4" />
+          </video>
+          <span class="vid-dur">18s</span>
+        </div>
+        <div class="vid-body">
+          <span class="vid-brand">ANSTY</span>
+          <h3 class="vid-title">The ANSTY Aurora — Teaser</h3>
+          <p class="vid-detail">&#39;Glow Together: The ANSTY Aurora&#39; over mountains and forest under the northern lights, closing on the ANSTY logo.</p>
+        </div>
+      </article>
+      <article class="vid-card reveal d2">
+        <div class="vid-media">
+          <video controls playsinline preload="none" poster="media/smartwatch-motion-post-7.jpg" style="aspect-ratio:4/5" aria-label="ANSTY — Smartwatch Showcase (28 seconds)">
+            <source src="media/smartwatch-motion-post-7.mp4" type="video/mp4" />
+          </video>
+          <span class="vid-dur">28s</span>
+        </div>
+        <div class="vid-body">
+          <span class="vid-brand">ANSTY</span>
+          <h3 class="vid-title">Smartwatch Showcase</h3>
+          <p class="vid-detail">Smartwatch front face and sensor back against a dark burst background, with a bold SMART headline. (Brand shown in the video is ANSTY.)</p>
+        </div>
+      </article>
+      <article class="vid-card reveal">
+        <div class="vid-media">
+          <video controls playsinline preload="none" poster="media/motion-29.jpg" style="aspect-ratio:4/5" aria-label="ANSTY — Aurora Event Countdown, 5 Days to Go (30 seconds)">
+            <source src="media/motion-29.mp4" type="video/mp4" />
+          </video>
+          <span class="vid-dur">30s</span>
+        </div>
+        <div class="vid-body">
+          <span class="vid-brand">ANSTY</span>
+          <h3 class="vid-title">Aurora Event Countdown — 5 Days to Go</h3>
+          <p class="vid-detail">Countdown creative for the Aurora event at Lotte Hotel, Crystal Ballroom, 24 June 2026 — date and venue as shown on the creative.</p>
+        </div>
+      </article>
+      <article class="vid-card reveal d1">
+        <div class="vid-media">
+          <video controls playsinline preload="none" poster="media/motion-28-revise.jpg" style="aspect-ratio:4/5" aria-label="ANSTY — Aurora Event Countdown, 4 Days to Go (26 seconds)">
+            <source src="media/motion-28-revise.mp4" type="video/mp4" />
+          </video>
+          <span class="vid-dur">26s</span>
+        </div>
+        <div class="vid-body">
+          <span class="vid-brand">ANSTY</span>
+          <h3 class="vid-title">Aurora Event Countdown — 4 Days to Go</h3>
+          <p class="vid-detail">&#39;Everyone ready?&#39; over aurora mountains. Lotte Hotel, Crystal Ballroom, 24 June 2026 — date and venue as shown on the creative.</p>
+        </div>
+      </article>
+      <article class="vid-card reveal d2">
+        <div class="vid-media">
+          <video controls playsinline preload="none" poster="media/motion-post-30.jpg" style="aspect-ratio:4/5" aria-label="ANSTY — Aurora Event Countdown, 3 Days to Go (36 seconds)">
+            <source src="media/motion-post-30.mp4" type="video/mp4" />
+          </video>
+          <span class="vid-dur">36s</span>
+        </div>
+        <div class="vid-body">
+          <span class="vid-brand">ANSTY</span>
+          <h3 class="vid-title">Aurora Event Countdown — 3 Days to Go</h3>
+          <p class="vid-detail">Performer silhouettes under the aurora. Lotte Hotel, Crystal Ballroom, 24 June 2026 — date and venue as shown on the creative.</p>
+        </div>
+      </article>
+    </div>
+
+    <h3 class="subhead">Reels &amp; <span class="accent">TikTok</span></h3>
+    <p class="subhead-note">1080 × 1920 · 9:16 · 4 videos</p>
+    <div class="vid-grid vid-grid--reels">
+      <article class="vid-card reveal">
+        <div class="vid-media">
+          <video controls playsinline preload="none" poster="media/reels-10.jpg" style="aspect-ratio:9/16" aria-label="Pix Box — Something Exciting Is Coming, Street Teaser (25 seconds)">
+            <source src="media/reels-10.mp4" type="video/mp4" />
+          </video>
+          <span class="vid-dur">25s</span>
+        </div>
+        <div class="vid-body">
+          <span class="vid-brand">Pix Box</span>
+          <h3 class="vid-title">Something Exciting Is Coming — Street Teaser</h3>
+          <p class="vid-detail">Street teaser: a &#39;Something Exciting Is Coming&#39; sign held up on a city sidewalk, closing on the Pix Box logo.</p>
+        </div>
+      </article>
+      <article class="vid-card reveal d1">
+        <div class="vid-media">
+          <video controls playsinline preload="none" poster="media/shwe-ohh-1.jpg" style="aspect-ratio:9/16" aria-label="Shwe Ohh Pharmacy — Store Tour and Promotions (34 seconds)">
+            <source src="media/shwe-ohh-1.mp4" type="video/mp4" />
+          </video>
+          <span class="vid-dur">34s</span>
+        </div>
+        <div class="vid-body">
+          <span class="vid-brand">Shwe Ohh Pharmacy</span>
+          <h3 class="vid-title">Store Tour &amp; Promotions</h3>
+          <p class="vid-detail">Storefront, staff and shelves of baby care, with discounts, promotions and a free gift. &#39;Quality Medicines, Excellent Care&#39;.</p>
+        </div>
+      </article>
+      <article class="vid-card reveal d2">
+        <div class="vid-media">
+          <video controls playsinline preload="none" poster="media/reels-6.jpg" style="aspect-ratio:9/16" aria-label="G3 — Presenter Reel (43 seconds)">
+            <source src="media/reels-6.mp4" type="video/mp4" />
+          </video>
+          <span class="vid-dur">43s</span>
+        </div>
+        <div class="vid-body">
+          <span class="vid-brand">G3</span>
+          <h3 class="vid-title">Presenter Reel</h3>
+          <p class="vid-detail">Presenter-led brand reel filmed in the G3 office, closing on the 3D G3 logo.</p>
+        </div>
+      </article>
+      <article class="vid-card reveal d3">
+        <div class="vid-media">
+          <video controls playsinline preload="none" poster="media/ansty-event-recap.jpg" style="aspect-ratio:9/16" aria-label="ANSTY — Aurora Event, Recap Film (91 seconds)">
+            <source src="media/ansty-event-recap.mp4" type="video/mp4" />
+          </video>
+          <span class="vid-dur">91s</span>
+        </div>
+        <div class="vid-body">
+          <span class="vid-brand">ANSTY</span>
+          <h3 class="vid-title">Aurora Event — Recap Film</h3>
+          <p class="vid-detail">Event recap: photo walls, the Glow Together stage, hosts and a live performance in front of the crowd.</p>
+        </div>
+      </article>
     </div>
   </div>
 </section>
@@ -1991,7 +2171,7 @@
      The CSS structural rules above already hide them from first paint; here we
      only tag them and assign the intra-group stagger (title first, then its
      lines follow) by order within each parent group — tens of ms per step. */
-  var TX_SEL = ".svc h3,.svc p,.svc .go,.svc .badge-soon,.svc li,.also-row .also-lbl,.also-row .chip,.work-visual .wname,.work-tag,.work-body h3,.work-body p,.work-stats > div,.case-toggle,.case-detail b,.case-detail p,.why-item .n,.why-item h3,.why-item p,.step .sn,.step h3,.step p,.ai-band .eyebrow,.ai-band h2,.ai-band p,.ai-tier b,.ai-tier span,.pkg .pname,.pkg .pfor,.pkg li,.pkg .price-note,.ins .cat,.ins h3,.ins p,.ins .go,.faq > button,.faq .ans p,.stat .lbl,.contact-facts > div,.field,.form-foot,.form-note,.foot-brand p,.foot-col h4,.foot-col a,.foot-col span,.foot-bottom span,.about-pos,.about-close,.subhead,.subhead-note,.mv-card h3,.mv-card p,.value-card h3,.value-card p,.ind-chip,.team-card h3,.team-card .team-role,.team-card .team-bg,.team-card p,.core-card b,.core-card span,.talent-lbl,.talent-chip,.talent-note,.trust-name,.suite-chip,.paid-grid > div,.section-lede,.eyebrow,.pkg-note,.contact-intro";
+  var TX_SEL = ".svc h3,.svc p,.svc .go,.svc .badge-soon,.svc li,.also-row .also-lbl,.also-row .chip,.work-visual .wname,.work-tag,.work-body h3,.work-body p,.work-stats > div,.case-toggle,.case-detail b,.case-detail p,.why-item .n,.why-item h3,.why-item p,.step .sn,.step h3,.step p,.ai-band .eyebrow,.ai-band h2,.ai-band p,.ai-tier b,.ai-tier span,.pkg .pname,.pkg .pfor,.pkg li,.pkg .price-note,.ins .cat,.ins h3,.ins p,.ins .go,.faq > button,.faq .ans p,.stat .lbl,.contact-facts > div,.field,.form-foot,.form-note,.foot-brand p,.foot-col h4,.foot-col a,.foot-col span,.foot-bottom span,.about-pos,.about-close,.subhead,.subhead-note,.mv-card h3,.mv-card p,.value-card h3,.value-card p,.ind-chip,.team-card h3,.team-card .team-role,.team-card .team-bg,.team-card p,.core-card b,.core-card span,.talent-lbl,.talent-chip,.talent-note,.trust-name,.suite-chip,.paid-grid > div,.section-lede,.eyebrow,.pkg-note,.contact-intro,.vid-brand,.vid-title,.vid-detail";
   var txEls = document.querySelectorAll(TX_SEL);
   txEls.forEach(function(el){ el.classList.add("tx"); });
   var groupCount = new Map();
@@ -2290,7 +2470,7 @@
   });
 
   /* Neon sweep + spring tap: passive listeners, never block the tap's action */
-  var neonSel = ".svc, .pkg, .ins, .step, .work-card, .btn, nav.main-nav a, .chip, .ai-tier, .team-card, .value-card, .mv-card, .core-card, .ind-chip";
+  var neonSel = ".svc, .pkg, .ins, .step, .work-card, .vid-card, .btn, nav.main-nav a, .chip, .ai-tier, .team-card, .value-card, .mv-card, .core-card, .ind-chip";
   function sweep(el){
     var n = null;
     for (var i = 0; i < el.children.length; i++) {
