@@ -103,7 +103,7 @@
   .js .faq > button,.js .faq .ans p,
   .js .stat .lbl,
   .js .contact-facts > div,.js .field,.js .form-foot,.js .form-note,
-  .js .foot-brand p,.js .foot-col h4,.js .foot-col a,.js .foot-col span,.js .foot-bottom span,
+  .js .foot-brand p,.js .foot-bottom span,
   .js .svc li,.js .about-pos,.js .about-close,.js .subhead,.js .subhead-note,
   .js .mv-card h3,.js .mv-card p,.js .value-card h3,.js .value-card p,.js .ind-chip,
   .js .team-card h3,.js .team-card .team-role,.js .team-card .team-bg,.js .team-card p,
@@ -129,7 +129,7 @@
   .js .faq > button.in,.js .faq .ans p.in,
   .js .stat .lbl.in,
   .js .contact-facts > div.in,.js .field.in,.js .form-foot.in,.js .form-note.in,
-  .js .foot-brand p.in,.js .foot-col h4.in,.js .foot-col a.in,.js .foot-col span.in,.js .foot-bottom span.in,
+  .js .foot-brand p.in,.js .foot-bottom span.in,
   .js .svc li.in,.js .about-pos.in,.js .about-close.in,.js .subhead.in,.js .subhead-note.in,
   .js .mv-card h3.in,.js .mv-card p.in,.js .value-card h3.in,.js .value-card p.in,.js .ind-chip.in,
   .js .team-card h3.in,.js .team-card .team-role.in,.js .team-card .team-bg.in,.js .team-card p.in,
@@ -429,14 +429,9 @@
 
   /* ---------- Footer ---------- */
   footer{border-top:1px solid var(--line);background:#070302;padding:64px 0 44px}
-  .foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px}
   .foot-brand p{color:var(--muted);font-size:.94rem;margin-top:16px;max-width:300px}
-  .foot-col h4{font-size:.8rem;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);margin-bottom:18px;font-weight:700}
-  .foot-col a{display:block;color:var(--muted);padding:6px 0;font-size:.95rem;transition:color .2s ease}
-  .foot-col a:hover{color:var(--prime-2)}
-  .foot-col span{display:block;color:var(--muted);padding:6px 0;font-size:.95rem}
   .foot-bottom{
-    margin-top:52px;padding-top:26px;border-top:1px solid var(--line);
+    margin-top:36px;padding-top:26px;border-top:1px solid var(--line);
     display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;color:var(--faint);font-size:.86rem;
   }
   .foot-bottom b{color:var(--ink);letter-spacing:.18em}
@@ -1010,7 +1005,6 @@
     .hero-mark{order:-1}
     .hero-mark .mark-big{width:min(190px,50vw)}
     .hero-mark::before{width:min(190px,50vw)}
-    .foot-grid{grid-template-columns:1fr 1fr}
     .values-grid{grid-template-columns:repeat(2,1fr)}
   }
   @media (max-width:768px){
@@ -1039,7 +1033,6 @@
     .numbers-band{grid-template-columns:1fr}
     .stat{border-left:none;border-top:1px solid var(--line)}
     .stat:first-child{border-top:none}
-    .foot-grid{grid-template-columns:1fr}
     .hero-ctas{flex-direction:column}
     .hero-ctas .btn{width:100%}
     .wrap{padding:0 18px}
@@ -2046,41 +2039,15 @@
 <!-- ================= FOOTER ================= -->
 <footer>
   <div class="wrap">
-    <div class="foot-grid">
-      <div class="foot-brand">
-        <a class="brand" href="#top" aria-label="ONE.A — ONE Agency">
-          <svg width="40" height="40" viewBox="0 0 100 100" role="img" aria-label="ONE.A logo mark">
-            <circle cx="50" cy="50" r="48" fill="#EF4303"/>
-            <path d="M62 102 L62 22 L46 22 L46 44 L28 44 L28 58 L46 58 L46 102 Z" fill="#FFFFFF"/>
-          </svg>
-          <span class="brand-name">ONE.A<small>ONE AGENCY</small></span>
-        </a>
-        <p>You bring the brand, we bring the ONE. Content, video and AI video that grows Myanmar brands.</p>
-      </div>
-      <div class="foot-col">
-        <h4>Explore</h4>
-        <a href="#services">Services</a>
-        <a href="#work">Work</a>
-        <a href="#about">About</a>
-        <a href="#team">Team</a>
-        <a href="#insights">Insights</a>
-      </div>
-      <div class="foot-col">
-        <h4>Services</h4>
-        <a href="#services">Social Media Management</a>
-        <a href="#services">Creative &amp; Content</a>
-        <a href="#services">Performance Marketing</a>
-        <a href="#services">Influencer Marketing &amp; PR</a>
-        <a href="#services">Website &amp; SEO</a>
-        <a href="#services">Branding &amp; Design</a>
-        <a href="#ai-video">AI Video Production</a>
-      </div>
-      <div class="foot-col">
-        <h4>Contact</h4>
-        <span>No.40, 3rd Floor, East Myin Pyaing Kwin Road, Tamwe Township, Yangon</span>
-        <a href="tel:+959400926363">+959 400 926 363</a>
-        <a href="#contact">Get a Proposal →</a>
-      </div>
+    <div class="foot-brand">
+      <a class="brand" href="#top" aria-label="ONE.A — ONE Agency">
+        <svg width="40" height="40" viewBox="0 0 100 100" role="img" aria-label="ONE.A logo mark">
+          <circle cx="50" cy="50" r="48" fill="#EF4303"/>
+          <path d="M62 102 L62 22 L46 22 L46 44 L28 44 L28 58 L46 58 L46 102 Z" fill="#FFFFFF"/>
+        </svg>
+        <span class="brand-name">ONE.A<small>ONE AGENCY</small></span>
+      </a>
+      <p>You bring the brand, we bring the ONE. Content, video and AI video that grows Myanmar brands.</p>
     </div>
     <div class="foot-bottom">
       <span>© 2026 <b>ONE.A</b> — ONE AGENCY. All rights reserved.</span>
@@ -2212,7 +2179,7 @@
      The CSS structural rules above already hide them from first paint; here we
      only tag them and assign the intra-group stagger (title first, then its
      lines follow) by order within each parent group — tens of ms per step. */
-  var TX_SEL = ".svc h3,.svc p,.svc .go,.svc .badge-soon,.svc li,.also-row .also-lbl,.also-row .chip,.work-visual .wname,.work-tag,.work-body h3,.work-body p,.work-stats > div,.case-toggle,.case-detail b,.case-detail p,.why-item .n,.why-item h3,.why-item p,.step .sn,.step h3,.step p,.ai-band .eyebrow,.ai-band h2,.ai-band p,.ai-tier b,.ai-tier span,.pkg .pname,.pkg .pfor,.pkg li,.pkg .price-note,.ins .cat,.ins h3,.ins p,.ins .go,.faq > button,.faq .ans p,.stat .lbl,.contact-facts > div,.field,.form-foot,.form-note,.foot-brand p,.foot-col h4,.foot-col a,.foot-col span,.foot-bottom span,.about-pos,.about-close,.subhead,.subhead-note,.mv-card h3,.mv-card p,.value-card h3,.value-card p,.ind-chip,.team-card h3,.team-card .team-role,.team-card .team-bg,.team-card p,.core-card b,.core-card span,.talent-lbl,.talent-chip,.talent-note,.trust-name,.suite-chip,.paid-grid > div,.section-lede,.eyebrow,.pkg-note,.contact-intro,.vid-brand,.vid-title,.vid-detail,.post-brand,.post-title,.post-detail,.post-tag";
+  var TX_SEL = ".svc h3,.svc p,.svc .go,.svc .badge-soon,.svc li,.also-row .also-lbl,.also-row .chip,.work-visual .wname,.work-tag,.work-body h3,.work-body p,.work-stats > div,.case-toggle,.case-detail b,.case-detail p,.why-item .n,.why-item h3,.why-item p,.step .sn,.step h3,.step p,.ai-band .eyebrow,.ai-band h2,.ai-band p,.ai-tier b,.ai-tier span,.pkg .pname,.pkg .pfor,.pkg li,.pkg .price-note,.ins .cat,.ins h3,.ins p,.ins .go,.faq > button,.faq .ans p,.stat .lbl,.contact-facts > div,.field,.form-foot,.form-note,.foot-brand p,.foot-bottom span,.about-pos,.about-close,.subhead,.subhead-note,.mv-card h3,.mv-card p,.value-card h3,.value-card p,.ind-chip,.team-card h3,.team-card .team-role,.team-card .team-bg,.team-card p,.core-card b,.core-card span,.talent-lbl,.talent-chip,.talent-note,.trust-name,.suite-chip,.paid-grid > div,.section-lede,.eyebrow,.pkg-note,.contact-intro,.vid-brand,.vid-title,.vid-detail,.post-brand,.post-title,.post-detail,.post-tag";
   var txEls = document.querySelectorAll(TX_SEL);
   txEls.forEach(function(el){ el.classList.add("tx"); });
   var groupCount = new Map();
