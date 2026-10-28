@@ -110,6 +110,7 @@
   .js .core-card b,.js .core-card span,.js .talent-lbl,.js .talent-chip,.js .talent-note,
   .js .trust-name,.js .suite-chip,.js .paid-grid > div,
   .js .vid-brand,.js .vid-title,.js .vid-detail,
+  .js .post-brand,.js .post-title,.js .post-detail,.js .post-tag,
   .js .section-lede,.js .eyebrow,.js .pkg-note,.js .contact-intro{
     opacity:0;transform:translateY(16px);
     transition:opacity .45s ease,transform .7s cubic-bezier(.22,1.28,.36,1);
@@ -135,6 +136,7 @@
   .js .core-card b.in,.js .core-card span.in,.js .talent-lbl.in,.js .talent-chip.in,.js .talent-note.in,
   .js .trust-name.in,.js .suite-chip.in,.js .paid-grid > div.in,
   .js .vid-brand.in,.js .vid-title.in,.js .vid-detail.in,
+  .js .post-brand.in,.js .post-title.in,.js .post-detail.in,.js .post-tag.in,
   .js .section-lede.in,.js .eyebrow.in,.js .pkg-note.in,.js .contact-intro.in{
     opacity:1;transform:none;
   }
@@ -651,16 +653,16 @@
   .numbers-band.in .stat:nth-child(3) .num::after{transition-delay:.45s}
   .numbers-band.in .stat:nth-child(4) .num::after{transition-delay:.6s}
   /* Cards: orange top-border sweep + soft lift shadow */
-  .svc,.pkg,.ins,.step,.work-card,.vid-card,.mv-card,.value-card,.team-card,.core-card,.ind-chip{position:relative}
-  .svc::before,.pkg::before,.ins::before,.step::before,.work-card::before,.vid-card::before,
+  .svc,.pkg,.ins,.step,.work-card,.vid-card,.post-card,.mv-card,.value-card,.team-card,.core-card,.ind-chip{position:relative}
+  .svc::before,.pkg::before,.ins::before,.step::before,.work-card::before,.vid-card::before,.post-card::before,
   .mv-card::before,.value-card::before,.team-card::before,.core-card::before,.ind-chip::before{
     content:"";position:absolute;top:0;left:0;right:0;height:3px;z-index:2;
     border-radius:3px 3px 0 0;background:linear-gradient(90deg,var(--prime),var(--prime-2));
     transform:scaleX(0);transform-origin:left;transition:transform .45s ease;
   }
-  .svc:hover::before,.pkg:hover::before,.ins:hover::before,.step:hover::before,.work-card:hover::before,.vid-card:hover::before,
+  .svc:hover::before,.pkg:hover::before,.ins:hover::before,.step:hover::before,.work-card:hover::before,.vid-card:hover::before,.post-card:hover::before,
   .mv-card:hover::before,.value-card:hover::before,.team-card:hover::before,.core-card:hover::before,.ind-chip:hover::before{transform:scaleX(1)}
-  .svc:hover,.pkg:hover,.ins:hover,.step:hover,.work-card:hover,.vid-card:hover,.mv-card:hover,.value-card:hover,.team-card:hover{box-shadow:0 26px 48px -24px rgba(0,0,0,.75)}
+  .svc:hover,.pkg:hover,.ins:hover,.step:hover,.work-card:hover,.vid-card:hover,.post-card:hover,.mv-card:hover,.value-card:hover,.team-card:hover{box-shadow:0 26px 48px -24px rgba(0,0,0,.75)}
   /* AI spotlight: shine sweep + pulsing glow behind tiers */
   .ai-band::before{
     content:"";position:absolute;inset:0;pointer-events:none;
@@ -793,12 +795,12 @@
   @keyframes numPop{0%{transform:scale(1)}40%{transform:scale(1.07)}100%{transform:scale(1)}}
   /* Glass cards: one-time shine sweep as each enters */
   .svc,.pkg,.ins,.mv-card,.value-card,.team-card,.core-card,.ind-chip{overflow:hidden}
-  .svc::after,.pkg::after,.ins::after,.vid-card::after,.mv-card::after,.value-card::after,.team-card::after{
+  .svc::after,.pkg::after,.ins::after,.vid-card::after,.post-card::after,.mv-card::after,.value-card::after,.team-card::after{
     content:"";position:absolute;inset:0;pointer-events:none;z-index:1;
     background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.11) 50%,transparent 65%);
     transform:translateX(-130%);opacity:0;
   }
-  .svc.in::after,.pkg.in::after,.ins.in::after,.vid-card.in::after,.mv-card.in::after,.value-card.in::after,.team-card.in::after{animation:cardShine 1s ease .15s 1 both}
+  .svc.in::after,.pkg.in::after,.ins.in::after,.vid-card.in::after,.post-card.in::after,.mv-card.in::after,.value-card.in::after,.team-card.in::after{animation:cardShine 1s ease .15s 1 both}
   @keyframes cardShine{
     0%{transform:translateX(-130%);opacity:0}
     15%{opacity:1}
@@ -827,7 +829,7 @@
   }
 
   /* ---------- Neon touch sweep (transform + opacity only; glow is pre-rendered) ---------- */
-  .svc,.pkg,.ins,.step,.work-card,.vid-card,.mv-card,.value-card,.team-card,.core-card,.ind-chip{contain:layout paint}
+  .svc,.pkg,.ins,.step,.work-card,.vid-card,.post-card,.mv-card,.value-card,.team-card,.core-card,.ind-chip{contain:layout paint}
   .step,.chip,.ai-tier{overflow:hidden}
   .chip,.ai-tier{position:relative}
   nav.main-nav a{overflow:hidden}
@@ -1009,10 +1011,31 @@
   .vid-title{font-size:1.12rem;font-weight:700;line-height:1.35}
   .vid-detail{color:var(--muted);font-size:.92rem;flex:1}
 
+  /* ---------- Social Posts ---------- */
+  #social{background:radial-gradient(760px 520px at -12% 30%,rgba(239,67,3,.10),rgba(239,67,3,0) 62%)}
+  .social-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:28px}
+  .post-card{
+    border-radius:var(--radius);border:1px solid var(--line);overflow:hidden;
+    background:var(--bg-2);display:flex;flex-direction:column;
+    transition:transform .45s cubic-bezier(.22,1.28,.36,1),border-color .25s ease;
+  }
+  .post-card:hover{transform:translateY(-6px);border-color:rgba(245,99,33,.55)}
+  .post-media{display:block;background:#000}
+  .post-media img{display:block;width:100%;height:auto}
+  .post-body{padding:24px;display:flex;flex-direction:column;gap:8px;flex:1}
+  .post-brand{font-size:.72rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--prime-2)}
+  .post-title{font-size:1.12rem;font-weight:700;line-height:1.35}
+  .post-tag{
+    align-self:flex-start;font-size:.68rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+    color:#ffb59a;border:1px solid rgba(245,99,33,.5);border-radius:999px;padding:4px 10px;
+  }
+  .post-detail{color:var(--muted);font-size:.92rem;flex:1}
+
   /* ---------- Responsive ---------- */
   @media (max-width:1020px){
     .svc-grid,.work-grid,.ins-grid{grid-template-columns:repeat(2,1fr)}
     .vid-grid{grid-template-columns:repeat(2,1fr)}
+    .social-grid{grid-template-columns:repeat(2,1fr)}
     .vid-grid--reels{grid-template-columns:repeat(3,1fr)}
     .pkg-grid{grid-template-columns:repeat(2,1fr)}
     .process-grid{grid-template-columns:repeat(3,1fr)}
@@ -1047,6 +1070,7 @@
   @media (max-width:560px){
     .svc-grid,.work-grid,.ins-grid,.pkg-grid{grid-template-columns:1fr}
     .vid-grid{grid-template-columns:1fr}
+    .social-grid{grid-template-columns:1fr}
     .vid-grid--reels{grid-template-columns:repeat(2,1fr)}
     .process-grid{grid-template-columns:1fr 1fr}
     .numbers-band{grid-template-columns:1fr}
@@ -1093,6 +1117,7 @@
       <a href="#services">Services</a>
       <a href="#work">Work</a>
       <a href="#videos">Videos</a>
+      <a href="#social">Social</a>
       <a href="#about">About</a>
       <a href="#team">Team</a>
       <a href="#packages">Packages</a>
@@ -1109,6 +1134,7 @@
   <a href="#services">Services</a>
   <a href="#work">Work</a>
   <a href="#videos">Videos</a>
+  <a href="#social">Social</a>
   <a href="#about">About</a>
   <a href="#team">Team</a>
   <a href="#packages">Packages</a>
@@ -1599,6 +1625,128 @@
           <span class="vid-brand">ANSTY</span>
           <h3 class="vid-title">Aurora Event — Recap Film</h3>
           <p class="vid-detail">Event recap: photo walls, the Glow Together stage, hosts and a live performance in front of the crowd.</p>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SOCIAL POSTS ================= -->
+<section class="section-pad" id="social">
+  <div class="wrap">
+    <span class="eyebrow reveal">Static posts</span>
+    <h2 class="section-title reveal d1">Social <span class="accent">Posts</span></h2>
+    <p class="section-lede reveal d2">Static posts from recent client campaigns — tap any post to view it full size.</p>
+    <p class="subhead-note reveal d3">Posts as featured in the agency profile showcase.</p>
+    <div class="social-grid">
+      <article class="post-card reveal">
+        <a class="post-media" href="social/social-recci-promo.jpg" target="_blank" rel="noopener" aria-label="View RECCI Tech Accessories Promo social post full size">
+          <img loading="lazy" src="social/social-recci-promo.jpg" alt="RECCI — Tech Accessories Promo social post" />
+        </a>
+        <div class="post-body">
+          <span class="post-brand">RECCI</span>
+          <h3 class="post-title">Tech Accessories Promo</h3>
+          <span class="post-tag">Social Post</span>
+          <p class="post-detail">Presenter with earbuds and wearables on bold orange, with a 1-year warranty strip.</p>
+        </div>
+      </article>
+      <article class="post-card reveal d1">
+        <a class="post-media" href="social/social-chefs-choice-food.jpg" target="_blank" rel="noopener" aria-label="View Chef's Choice Dishes That Invite social post full size">
+          <img loading="lazy" src="social/social-chefs-choice-food.jpg" alt="Chef's Choice — Dishes That Invite social post" />
+        </a>
+        <div class="post-body">
+          <span class="post-brand">Chef's Choice</span>
+          <h3 class="post-title">Dishes That Invite</h3>
+          <span class="post-tag">Social Post</span>
+          <p class="post-detail">Plated dishes and wine on deep green, inviting customers to the table.</p>
+        </div>
+      </article>
+      <article class="post-card reveal d2">
+        <a class="post-media" href="social/social-g3-home.jpg" target="_blank" rel="noopener" aria-label="View G3 Home, Built Right social post full size">
+          <img loading="lazy" src="social/social-g3-home.jpg" alt="G3 — Home, Built Right social post" />
+        </a>
+        <div class="post-body">
+          <span class="post-brand">G3</span>
+          <h3 class="post-title">Home, Built Right</h3>
+          <span class="post-tag">Social Post</span>
+          <p class="post-detail">Window installation at a new home at sunset, family at the door, with contact details.</p>
+        </div>
+      </article>
+      <article class="post-card reveal">
+        <a class="post-media" href="social/social-pixbox-promo.jpg" target="_blank" rel="noopener" aria-label="View Pix Box Where Is the Booth? social post full size">
+          <img loading="lazy" src="social/social-pixbox-promo.jpg" alt="Pix Box — Where Is the Booth? social post" />
+        </a>
+        <div class="post-body">
+          <span class="post-brand">Pix Box</span>
+          <h3 class="post-title">Where Is the Booth?</h3>
+          <span class="post-tag">Social Post</span>
+          <p class="post-detail">Playful photo-booth illustration with photo strips, asking where the Pix Box booth is.</p>
+        </div>
+      </article>
+      <article class="post-card reveal d1">
+        <a class="post-media" href="social/social-myat-taw-win-school.jpg" target="_blank" rel="noopener" aria-label="View Myat Taw Win Back to School social post full size">
+          <img loading="lazy" src="social/social-myat-taw-win-school.jpg" alt="Myat Taw Win — Back to School social post" />
+        </a>
+        <div class="post-body">
+          <span class="post-brand">Myat Taw Win</span>
+          <h3 class="post-title">Back to School</h3>
+          <span class="post-tag">Social Post</span>
+          <p class="post-detail">School girl with backpacks and school shoes against red curtains, for the new school season.</p>
+        </div>
+      </article>
+      <article class="post-card reveal d2">
+        <a class="post-media" href="social/social-myat-taw-win-bags.jpg" target="_blank" rel="noopener" aria-label="View Myat Taw Win School Collection social post full size">
+          <img loading="lazy" src="social/social-myat-taw-win-bags.jpg" alt="Myat Taw Win — School Collection social post" />
+        </a>
+        <div class="post-body">
+          <span class="post-brand">Myat Taw Win</span>
+          <h3 class="post-title">School Collection</h3>
+          <span class="post-tag">Social Post</span>
+          <p class="post-detail">Backpacks, lunch boxes, bags and shoes with mother and daughter, plus contact details.</p>
+        </div>
+      </article>
+      <article class="post-card reveal">
+        <a class="post-media" href="social/social-ansty-headphones.jpg" target="_blank" rel="noopener" aria-label="View ANSTY Style &amp; Quality Sound social post full size">
+          <img loading="lazy" src="social/social-ansty-headphones.jpg" alt="ANSTY — Style &amp; Quality Sound social post" />
+        </a>
+        <div class="post-body">
+          <span class="post-brand">ANSTY</span>
+          <h3 class="post-title">Style &amp; Quality Sound</h3>
+          <span class="post-tag">Social Post</span>
+          <p class="post-detail">Headphone showcase with a stylish couple, Style and Quality headlines, Thanlwin &amp; Thanthar lockup.</p>
+        </div>
+      </article>
+      <article class="post-card reveal d1">
+        <a class="post-media" href="social/social-gca-erp.jpg" target="_blank" rel="noopener" aria-label="View Global Connect Asia ERP Growth, in One Post social post full size">
+          <img loading="lazy" src="social/social-gca-erp.jpg" alt="Global Connect Asia — ERP Growth, in One Post social post" />
+        </a>
+        <div class="post-body">
+          <span class="post-brand">Global Connect Asia</span>
+          <h3 class="post-title">ERP Growth, in One Post</h3>
+          <span class="post-tag">Social Post</span>
+          <p class="post-detail">Odoo dashboard on a phone with growth bars — the integrated ERP story in a single visual.</p>
+        </div>
+      </article>
+      <article class="post-card reveal d2">
+        <a class="post-media" href="social/social-dr-sun-min-womens-day.jpg" target="_blank" rel="noopener" aria-label="View Dr. Sun Min Aesthetic Clinic Women's Day social post full size">
+          <img loading="lazy" src="social/social-dr-sun-min-womens-day.jpg" alt="Dr. Sun Min Aesthetic Clinic — Women's Day social post" />
+        </a>
+        <div class="post-body">
+          <span class="post-brand">Dr. Sun Min Aesthetic Clinic</span>
+          <h3 class="post-title">Women's Day</h3>
+          <span class="post-tag">Social Post</span>
+          <p class="post-detail">Women's Day tribute in soft pink florals, celebrating women with aesthetic care.</p>
+        </div>
+      </article>
+      <article class="post-card reveal">
+        <a class="post-media" href="social/social-chefs-choice-gift.jpg" target="_blank" rel="noopener" aria-label="View Chef's Choice The Gift of Good Taste social post full size">
+          <img loading="lazy" src="social/social-chefs-choice-gift.jpg" alt="Chef's Choice — The Gift of Good Taste social post" />
+        </a>
+        <div class="post-body">
+          <span class="post-brand">Chef's Choice</span>
+          <h3 class="post-title">The Gift of Good Taste</h3>
+          <span class="post-tag">Social Post</span>
+          <p class="post-detail">Tableware gift set with kettle and plates on festive green.</p>
         </div>
       </article>
     </div>
@@ -2171,7 +2319,7 @@
      The CSS structural rules above already hide them from first paint; here we
      only tag them and assign the intra-group stagger (title first, then its
      lines follow) by order within each parent group — tens of ms per step. */
-  var TX_SEL = ".svc h3,.svc p,.svc .go,.svc .badge-soon,.svc li,.also-row .also-lbl,.also-row .chip,.work-visual .wname,.work-tag,.work-body h3,.work-body p,.work-stats > div,.case-toggle,.case-detail b,.case-detail p,.why-item .n,.why-item h3,.why-item p,.step .sn,.step h3,.step p,.ai-band .eyebrow,.ai-band h2,.ai-band p,.ai-tier b,.ai-tier span,.pkg .pname,.pkg .pfor,.pkg li,.pkg .price-note,.ins .cat,.ins h3,.ins p,.ins .go,.faq > button,.faq .ans p,.stat .lbl,.contact-facts > div,.field,.form-foot,.form-note,.foot-brand p,.foot-col h4,.foot-col a,.foot-col span,.foot-bottom span,.about-pos,.about-close,.subhead,.subhead-note,.mv-card h3,.mv-card p,.value-card h3,.value-card p,.ind-chip,.team-card h3,.team-card .team-role,.team-card .team-bg,.team-card p,.core-card b,.core-card span,.talent-lbl,.talent-chip,.talent-note,.trust-name,.suite-chip,.paid-grid > div,.section-lede,.eyebrow,.pkg-note,.contact-intro,.vid-brand,.vid-title,.vid-detail";
+  var TX_SEL = ".svc h3,.svc p,.svc .go,.svc .badge-soon,.svc li,.also-row .also-lbl,.also-row .chip,.work-visual .wname,.work-tag,.work-body h3,.work-body p,.work-stats > div,.case-toggle,.case-detail b,.case-detail p,.why-item .n,.why-item h3,.why-item p,.step .sn,.step h3,.step p,.ai-band .eyebrow,.ai-band h2,.ai-band p,.ai-tier b,.ai-tier span,.pkg .pname,.pkg .pfor,.pkg li,.pkg .price-note,.ins .cat,.ins h3,.ins p,.ins .go,.faq > button,.faq .ans p,.stat .lbl,.contact-facts > div,.field,.form-foot,.form-note,.foot-brand p,.foot-col h4,.foot-col a,.foot-col span,.foot-bottom span,.about-pos,.about-close,.subhead,.subhead-note,.mv-card h3,.mv-card p,.value-card h3,.value-card p,.ind-chip,.team-card h3,.team-card .team-role,.team-card .team-bg,.team-card p,.core-card b,.core-card span,.talent-lbl,.talent-chip,.talent-note,.trust-name,.suite-chip,.paid-grid > div,.section-lede,.eyebrow,.pkg-note,.contact-intro,.vid-brand,.vid-title,.vid-detail,.post-brand,.post-title,.post-detail,.post-tag";
   var txEls = document.querySelectorAll(TX_SEL);
   txEls.forEach(function(el){ el.classList.add("tx"); });
   var groupCount = new Map();
@@ -2470,7 +2618,7 @@
   });
 
   /* Neon sweep + spring tap: passive listeners, never block the tap's action */
-  var neonSel = ".svc, .pkg, .ins, .step, .work-card, .vid-card, .btn, nav.main-nav a, .chip, .ai-tier, .team-card, .value-card, .mv-card, .core-card, .ind-chip";
+  var neonSel = ".svc, .pkg, .ins, .step, .work-card, .vid-card, .post-card, .btn, nav.main-nav a, .chip, .ai-tier, .team-card, .value-card, .mv-card, .core-card, .ind-chip";
   function sweep(el){
     var n = null;
     for (var i = 0; i < el.children.length; i++) {
