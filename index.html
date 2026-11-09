@@ -2103,7 +2103,9 @@
           <div><b>Working on</b><span>Fintech · Tech · B2B · Local Services · Recruitment</span></div>
         </div>
       </div>
-      <form class="brief reveal d1" id="briefForm" novalidate>
+      <form class="brief reveal d1" id="briefForm" action="https://formsubmit.co/info@oneagencymm.com" method="POST" novalidate>
+        <input type="hidden" name="_subject" value="New brief from ONE.A website" />
+        <input type="hidden" name="_next" value="https://mookie247.github.io/one-a-website/?brief=sent" />
         <div class="field">
           <label for="fName">Your name <i>*</i></label>
           <input id="fName" name="name" type="text" placeholder="e.g. Aye Chan Moe" required />
@@ -2157,7 +2159,7 @@
           <input id="fBrandGuide" name="brand_guide_link" type="url" placeholder="Paste a Google Drive or Dropbox link to your brand guide (optional)" />
         </div>
         <div class="form-success" id="formSuccess" role="status">
-          <b>Brief noted — thank you.</b> This form isn't connected to our inbox yet, so nothing was sent. To reach us directly, call <a href="tel:+959400926363">+959 400 926 363</a>.
+          <b>Brief sent — thank you.</b> We've received your brief at ONE.A and will get back to you soon. Prefer to talk now? Call <a href="tel:+959400926363">+959 400 926 363</a>.
         </div>
         <div class="form-foot">
           <button class="btn btn-prime" type="submit">Send Brief <span class="arr">→</span></button>
@@ -2548,25 +2550,35 @@
 
     var stage = intro.querySelector(".intro-stage");
     BRANDS.forEach(function(b, i){
-      var chip = document.createElement("button");
-      chip.type = "button";
-      chip.className = "intro-chip";
-      chip.setAttribute("data-chip", String(i));
-      chip.style.setProperty("--i", String(i));
-      chip.style.setProperty("--dx", POS[i][0] + "px");
-      chip.style.setProperty("--dy", POS[i][1] + "px");
-      chip.style.setProperty("--wx", WAY[i][0] + "px");
-      chip.style.setProperty("--wy", WAY[i][1] + "px");
-      /* Invisible until the lid has opened and this chip's turn comes:
-         keep it untappable / unfocusable until it has settled. */
-      chip.setAttribute("tabindex", "-1");
+      /* Each chip is only added to the page just before its turn to burst
+         out of the box (it is invisible at the box mouth until then, so
+         nothing on screen changes) — and it stays untappable / unfocusable
+         until it has settled. Entrance timing is unchanged: the chip still
+         starts moving at 1.02s + i×0.14s and settles at 1.87s + i×0.14s. */
       setTimeout(function(){
-        chip.classList.add("settled");
-        chip.removeAttribute("tabindex");
-      }, 1870 + i * 140);
-      chip.innerHTML = "<span><img src=\"logos/" + b[2] + ".webp\" alt=\"" + b[1] + " logo\" decoding=\"async\"></span>";
-      chip.addEventListener("click", function(){ enter(b[0]); });
-      stage.appendChild(chip);
+        if (closed) return;
+        var chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "intro-chip";
+        chip.setAttribute("data-chip", String(i));
+        chip.style.setProperty("--i", String(i));
+        chip.style.setProperty("--dx", POS[i][0] + "px");
+        chip.style.setProperty("--dy", POS[i][1] + "px");
+        chip.style.setProperty("--wx", WAY[i][0] + "px");
+        chip.style.setProperty("--wy", WAY[i][1] + "px");
+        chip.style.animationDelay = "0.02s";
+        chip.setAttribute("tabindex", "-1");
+        chip.disabled = true;
+        chip.innerHTML = "<span><img src=\"logos/" + b[2] + ".webp\" alt=\"" + b[1] + " logo\" decoding=\"async\"></span>";
+        chip.firstChild.style.animationDelay = "0.87s";
+        chip.addEventListener("click", function(){ enter(b[0]); });
+        stage.appendChild(chip);
+        setTimeout(function(){
+          chip.classList.add("settled");
+          chip.removeAttribute("tabindex");
+          chip.disabled = false;
+        }, 870);
+      }, 1000 + i * 140);
     });
 
     document.body.appendChild(intro);
@@ -2599,11 +2611,12 @@
     });
   })();
 
-  /* Brief form (front-end demo) */
+  /* Brief form — posts to FormSubmit (info@oneagencymm.com); on return
+     (?brief=sent) the in-page success message is shown instead of
+     FormSubmit's own Thank You page. */
   var form = document.getElementById("briefForm");
   var success = document.getElementById("formSuccess");
   form.addEventListener("submit", function(ev){
-    ev.preventDefault();
     var valid = true;
     form.querySelectorAll("[required]").forEach(function(f){
       if (!f.value.trim()) {
@@ -2612,10 +2625,17 @@
         f.addEventListener("input", function h(){ f.style.borderColor = ""; f.removeEventListener("input", h); });
       }
     });
-    if (!valid) return;
+    if (!valid) { ev.preventDefault(); return; }
+    /* Valid: let the browser post to FormSubmit; it redirects back to
+       https://mookie247.github.io/one-a-website/?brief=sent */
+  });
+  if (new URLSearchParams(window.location.search).get("brief") === "sent") {
     success.classList.add("show");
     success.scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "center"});
-  });
+    if (window.history && window.history.replaceState) {
+      window.history.replaceState(null, "", window.location.pathname + window.location.hash);
+    }
+  }
 
   /* Neon sweep + spring tap: passive listeners, never block the tap's action */
   var neonSel = ".svc, .pkg, .ins, .step, .work-card, .vid-card, .post-card, .btn, nav.main-nav a, .chip, .ai-tier, .team-card, .value-card, .mv-card, .core-card, .ind-chip";
