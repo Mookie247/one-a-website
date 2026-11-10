@@ -195,23 +195,53 @@
   nav.main-nav a:hover{color:#fff;background:rgba(255,255,255,.06)}
   .header-cta{margin-left:8px;min-height:44px;padding:10px 22px;font-size:.9rem}
   .burger{
-    display:none;margin-left:auto;width:48px;height:48px;border-radius:12px;
+    display:flex;margin-left:auto;width:52px;height:52px;border-radius:12px;flex-shrink:0;
     background:rgba(255,255,255,.05);border:1px solid var(--line);
     align-items:center;justify-content:center;flex-direction:column;gap:5px;
+    transition:border-color .25s ease,background .25s ease;
   }
+  .burger:hover{border-color:rgba(245,99,33,.6);background:rgba(255,255,255,.08)}
   .burger span{display:block;width:22px;height:2px;background:#fff;border-radius:2px;transition:transform .3s ease,opacity .3s ease}
   .burger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
   .burger.open span:nth-child(2){opacity:0}
   .burger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+  /* Full-screen menu overlay — the only navigation, on every screen size */
   .mobile-menu{
-    display:none;position:fixed;top:var(--header-h);left:0;right:0;z-index:99;
-    background:rgba(11,5,3,.98);border-bottom:1px solid var(--line);
-    padding:12px 24px 24px;flex-direction:column;
+    position:fixed;inset:0;z-index:99;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:calc(var(--header-h) + 20px) 24px 40px;
+    background:rgba(8,3,2,.86);
+    opacity:0;visibility:hidden;pointer-events:none;
+    transition:opacity .38s ease,visibility 0s linear .38s;
   }
-  .mobile-menu.open{display:flex}
-  .mobile-menu a{padding:15px 6px;font-size:1.05rem;font-weight:600;border-bottom:1px solid var(--line)}
-  .mobile-menu a:last-of-type{border-bottom:none}
-  .mobile-menu .btn{margin-top:14px}
+  .mobile-menu::before{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:
+      radial-gradient(720px 520px at 88% -6%, rgba(239,67,3,.18), rgba(239,67,3,0) 62%),
+      radial-gradient(720px 520px at -10% 106%, rgba(245,99,33,.12), rgba(245,99,33,0) 62%);
+  }
+  .mobile-menu.open{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .38s ease}
+  .mobile-menu a{
+    position:relative;z-index:1;
+    font-size:clamp(1.65rem,5.2vw,2.3rem);font-weight:700;line-height:1.25;letter-spacing:.01em;
+    padding:9px 22px;color:var(--ink);border-radius:12px;
+    opacity:0;transform:translateY(26px) scale(.96);
+    transition:opacity .35s ease,transform .65s cubic-bezier(.34,1.56,.64,1),color .2s ease;
+  }
+  .mobile-menu a:hover{color:var(--prime-2)}
+  .mobile-menu.open a{opacity:1;transform:none}
+  .mobile-menu.open a:nth-child(1){transition-delay:.06s}
+  .mobile-menu.open a:nth-child(2){transition-delay:.11s}
+  .mobile-menu.open a:nth-child(3){transition-delay:.16s}
+  .mobile-menu.open a:nth-child(4){transition-delay:.21s}
+  .mobile-menu.open a:nth-child(5){transition-delay:.26s}
+  .mobile-menu.open a:nth-child(6){transition-delay:.31s}
+  .mobile-menu.open a:nth-child(7){transition-delay:.36s}
+  .mobile-menu.open a:nth-child(8){transition-delay:.41s}
+  .mobile-menu.open a:nth-child(9){transition-delay:.48s}
+  .mobile-menu .btn{margin-top:24px;font-size:1rem;font-weight:600;min-height:54px;padding:14px 32px}
+  body.menu-open{overflow:hidden}
+  body.menu-open .mobile-cta{opacity:0;pointer-events:none}
 
   /* ---------- Hero ---------- */
   .hero{
@@ -475,7 +505,7 @@
     display:none;position:fixed;left:0;right:0;bottom:0;z-index:100;
     padding:12px 16px calc(12px + env(safe-area-inset-bottom));
     background:rgba(11,5,3,.94);backdrop-filter:blur(12px);border-top:1px solid var(--line);
-    gap:10px;
+    gap:10px;transition:opacity .3s ease;
   }
   .mobile-cta .btn{flex:1;min-height:52px}
   .mobile-cta .btn-ghost{flex:0 0 auto}
@@ -611,9 +641,6 @@
     background:var(--prime);transform:scaleX(0);transform-origin:left;transition:transform .3s ease;
   }
   nav.main-nav a:hover::after{transform:scaleX(1)}
-  /* Mobile menu entrance */
-  .mobile-menu.open{animation:menuIn .32s ease}
-  @keyframes menuIn{from{opacity:0}to{opacity:1}}
   /* Buttons: press scale, ghost fill sweep, prime shine sweep */
   .btn{position:relative;isolation:isolate;overflow:hidden}
   .btn:active{transform:scale(.97)}
@@ -1074,8 +1101,6 @@
   }
   @media (max-width:768px){
     .section-pad{padding:72px 0}
-    nav.main-nav,.header-cta{display:none}
-    .burger{display:flex}
     .why-grid{grid-template-columns:1fr}
     .contact-grid{grid-template-columns:1fr;gap:40px}
     form.brief{grid-template-columns:1fr;padding:26px 22px}
@@ -1134,33 +1159,22 @@
       </svg>
       <span class="brand-name">ONE.A<small>ONE AGENCY</small></span>
     </a>
-    <nav class="main-nav" aria-label="Main navigation">
-      <a href="#services">Services</a>
-      <a href="#work">Work</a>
-      <a href="#videos">Videos</a>
-      <a href="#social">Social</a>
-      <a href="#about">About</a>
-      <a href="#team">Team</a>
-      <a href="#insights">Insights</a>
-      <a href="#contact">Contact</a>
-    </nav>
-    <a class="btn btn-prime header-cta" href="#contact">Get a Proposal</a>
     <button class="burger" id="burger" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
       <span></span><span></span><span></span>
     </button>
   </div>
 </header>
-<div class="mobile-menu" id="mobileMenu">
-  <a href="#services">Services</a>
-  <a href="#work">Work</a>
-  <a href="#videos">Videos</a>
-  <a href="#social">Social</a>
-  <a href="#about">About</a>
-  <a href="#team">Team</a>
-  <a href="#insights">Insights</a>
-  <a href="#contact">Contact</a>
+<nav class="mobile-menu" id="mobileMenu" aria-label="Main navigation">
+  <a href="#services">Our Craft</a>
+  <a href="#work">Our Impact</a>
+  <a href="#videos">The Studio</a>
+  <a href="#social">Digital Influence</a>
+  <a href="#about">Our Story</a>
+  <a href="#team">Our Folks</a>
+  <a href="#insights">ONE Notes</a>
+  <a href="#contact">Let's Talk</a>
   <a class="btn btn-prime" href="#contact">Get a Proposal</a>
-</div>
+</nav>
 
 <main id="top">
 
@@ -2295,22 +2309,26 @@
   window.addEventListener("scroll", onScroll, {passive:true});
   onScroll();
 
-  /* Mobile menu */
+  /* Full-screen menu: burger toggles it (button animates to an X); closes on
+     link tap, X tap, Esc, or a tap on the overlay outside the links. */
   var burger = document.getElementById("burger");
   var menu = document.getElementById("mobileMenu");
-  function closeMenu(){
-    menu.classList.remove("open");
-    burger.classList.remove("open");
-    burger.setAttribute("aria-expanded","false");
-    burger.setAttribute("aria-label","Open menu");
-  }
-  burger.addEventListener("click", function(){
-    var open = menu.classList.toggle("open");
+  function setMenu(open){
+    menu.classList.toggle("open", open);
     burger.classList.toggle("open", open);
     burger.setAttribute("aria-expanded", open ? "true" : "false");
     burger.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    document.body.classList.toggle("menu-open", open);
+  }
+  function closeMenu(){ setMenu(false); }
+  burger.addEventListener("click", function(){
+    setMenu(!menu.classList.contains("open"));
   });
   menu.querySelectorAll("a").forEach(function(a){ a.addEventListener("click", closeMenu); });
+  menu.addEventListener("click", function(e){ if (e.target === menu) closeMenu(); });
+  document.addEventListener("keydown", function(e){
+    if ((e.key === "Escape" || e.key === "Esc") && menu.classList.contains("open")) closeMenu();
+  });
 
   /* Text cascade tagging: every text block joins the reveal system as .tx.
      The CSS structural rules above already hide them from first paint; here we
