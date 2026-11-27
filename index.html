@@ -1001,20 +1001,32 @@
   .team-card p.team-bio{color:var(--muted);font-size:.95rem;margin-top:10px;flex:1}
   .core-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:28px}
   .core-card{
-    border:1px solid var(--line);border-radius:14px;padding:20px 22px;
-    display:flex;flex-direction:column;gap:4px;
+    border:1px solid var(--line);border-radius:14px;padding:18px 20px;
+    display:flex;flex-direction:row;align-items:center;gap:14px;
     transition:border-color .25s ease,transform .45s cubic-bezier(.22,1.28,.36,1);
   }
   .core-card:hover{border-color:rgba(245,99,33,.5);transform:translateY(-3px)}
+  .core-photo{width:48px;height:48px;border-radius:50%;object-fit:cover;flex-shrink:0;background:#000}
+  .core-init{
+    width:48px;height:48px;border-radius:50%;background:var(--prime);color:#fff;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.92rem;font-style:normal;letter-spacing:.02em;
+  }
+  .core-txt{min-width:0;display:flex;flex-direction:column;gap:4px}
   .core-card b{display:block;font-size:1.02rem;font-weight:700}
   .core-card span{color:var(--muted);font-size:.88rem}
   .talent-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:28px}
   .talent-lbl{color:var(--faint);font-size:.85rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;margin-right:6px}
   .talent-chip{
-    border:1px solid var(--line);border-radius:999px;padding:9px 18px;font-size:.9rem;color:var(--muted);
+    border:1px solid var(--line);border-radius:999px;padding:5px 16px 5px 5px;font-size:.9rem;color:var(--muted);
+    display:inline-flex;align-items:center;gap:9px;
     transition:border-color .2s ease,color .2s ease;
   }
   .talent-chip:hover{border-color:var(--prime);color:#fff}
+  .talent-photo{width:28px;height:28px;border-radius:50%;object-fit:cover;flex-shrink:0;background:#000}
+  .talent-init{
+    width:28px;height:28px;border-radius:50%;background:var(--prime);color:#fff;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.66rem;font-style:normal;letter-spacing:.02em;
+  }
   .talent-note{color:var(--muted);margin-top:12px;font-size:.95rem}
   .trust-more{
     display:flex;flex-wrap:wrap;justify-content:center;align-items:baseline;gap:14px 32px;
@@ -1976,17 +1988,17 @@
     </div>
     <h3 class="subhead">Core <span class="accent">team</span></h3>
     <div class="core-grid">
-      <div class="core-card reveal"><b>Khaing Shun Thet</b><span>Senior Creative Designer</span></div>
-      <div class="core-card reveal d1"><b>Myat Thu Khaing</b><span>Senior Account Executive</span></div>
-      <div class="core-card reveal d2"><b>Nay Htet Paing</b><span>Creative Designer</span></div>
-      <div class="core-card reveal"><b>Zun Pwint Phyu</b><span>Corporate Secretary</span></div>
-      <div class="core-card reveal d1"><b>Myat Shoon Lae Khaing</b><span>Junior Content Writer</span></div>
+      <div class="core-card reveal"><i class="core-init" aria-hidden="true">KS</i><div class="core-txt"><b>Khaing Shun Thet</b><span>Senior Creative Designer</span></div></div>
+      <div class="core-card reveal d1"><i class="core-init" aria-hidden="true">MT</i><div class="core-txt"><b>Myat Thu Khaing</b><span>Senior Account Executive</span></div></div>
+      <div class="core-card reveal d2"><i class="core-init" aria-hidden="true">NH</i><div class="core-txt"><b>Nay Htet Paing</b><span>Creative Designer</span></div></div>
+      <div class="core-card reveal"><i class="core-init" aria-hidden="true">ZP</i><div class="core-txt"><b>Zun Pwint Phyu</b><span>Corporate Secretary</span></div></div>
+      <div class="core-card reveal d1"><i class="core-init" aria-hidden="true">MS</i><div class="core-txt"><b>Myat Shoon Lae Khaing</b><span>Junior Content Writer</span></div></div>
     </div>
     <h3 class="subhead">Internal <span class="accent">Talent</span></h3>
     <div class="talent-row">
       <span class="talent-lbl">Internal Talent</span>
-      <span class="talent-chip">Poe Thu</span>
-      <span class="talent-chip">Ei Pyae (EP)</span>
+      <span class="talent-chip"><i class="talent-init" aria-hidden="true">PT</i><span class="talent-name">Poe Thu</span></span>
+      <span class="talent-chip"><i class="talent-init" aria-hidden="true">EP</i><span class="talent-name">Ei Pyae (EP)</span></span>
     </div>
     <p class="talent-note">In-house talent fronting ONE.A social content.</p>
   </div>
@@ -3280,10 +3292,15 @@
       core_subhead: subs[1] ? domRich(subs[1], "a") : "",
       talent_subhead: subs[2] ? domRich(subs[2], "a") : "",
       core: $$(".core-grid .core-card").map(function(c){
-        return { name: txt($("b", c)), role: txt($("span", c)) };
+        var img = $("img.core-photo", c);
+        return { name: txt($("b", c)), role: txt($("span", c)), photo_url: img ? (img.getAttribute("src") || "") : "" };
       }),
       talent_label: txt($(".talent-lbl")),
-      talent: $$(".talent-row .talent-chip").map(function(c){ return txt(c); }),
+      talent: $$(".talent-row .talent-chip").map(function(c){
+        var img = $("img.talent-photo", c);
+        var nameEl = $(".talent-name", c);
+        return { name: nameEl ? txt(nameEl) : txt(c), photo_url: img ? (img.getAttribute("src") || "") : "" };
+      }),
       talent_note: txt($(".talent-note"))
     };
   }
@@ -3560,7 +3577,10 @@
       var grid = $(".core-grid");
       if (grid) {
         grid.innerHTML = x.core.map(function(c){
-          return '<div class="core-card reveal in"><b class="in">' + esc(c.name) + '</b><span class="in">' + esc(c.role) + "</span></div>";
+          var avatar = c.photo_url
+            ? '<img class="core-photo" src="' + esc(c.photo_url) + '" alt="' + esc(c.name) + '">'
+            : '<i class="core-init" aria-hidden="true">' + esc(initialsOf(c.name)) + "</i>";
+          return '<div class="core-card reveal in">' + avatar + '<div class="core-txt"><b class="in">' + esc(c.name) + '</b><span class="in">' + esc(c.role) + "</span></div></div>";
         }).join("");
       }
     }
@@ -3568,7 +3588,13 @@
       var row = $(".talent-row");
       if (row) {
         row.innerHTML = '<span class="talent-lbl in">' + esc(x.talent_label || "Internal Talent") + "</span>" +
-          x.talent.map(function(n){ return '<span class="talent-chip in">' + esc(n) + "</span>"; }).join("");
+          x.talent.map(function(t){
+            var item = typeof t === "string" ? { name: t, photo_url: "" } : t;
+            var avatar = item.photo_url
+              ? '<img class="talent-photo" src="' + esc(item.photo_url) + '" alt="' + esc(item.name) + '">'
+              : '<i class="talent-init" aria-hidden="true">' + esc(initialsOf(item.name)) + "</i>";
+            return '<span class="talent-chip in">' + avatar + '<span class="talent-name">' + esc(item.name) + "</span></span>";
+          }).join("");
       }
     }
     if (x.talent_note != null) { var note = $(".talent-note"); if (note) note.textContent = x.talent_note; }
@@ -4040,9 +4066,15 @@
       return { id: r.id, name: r.name || "", role: r.role || "", photo_url: r.photo_url || "", visible: r.visible !== false, bg: bio.bg || "", bio: bio.bio || "" };
     });
     var extra = clone(contentOr("team_extra", scrapeTeamExtra));
+    extra.core = (extra.core || []).map(function(c){
+      return { name: c.name || "", role: c.role || "", photo_url: c.photo_url || "" };
+    });
+    extra.talent = (extra.talent || []).map(function(t){
+      return typeof t === "string" ? { name: t, photo_url: "" } : { name: t.name || "", photo_url: t.photo_url || "" };
+    });
     pane.innerHTML =
       groupHtml("oaG-team", "Team leads", "Shown as the large cards in Our Folks. Add a photo, or leave it blank to use initials.", '<div id="oaTeamList"></div>') +
-      groupHtml("oaG-teamx", "Core team & internal talent", "",
+      groupHtml("oaG-teamx", "Core team & internal talent", "Core team members and talent can each have a photo too — leave it blank to show their initials. Use “Add talent” to add someone new.",
         '<div class="oa-grid2">' +
           fld("“Team leads” heading — [brackets] = orange", "leads_subhead", extra.leads_subhead) +
           fld("“Core team” heading — [brackets] = orange", "core_subhead", extra.core_subhead) +
@@ -4053,7 +4085,7 @@
           fld("Talent row label", "talent_label", extra.talent_label) +
           fld("Talent note", "talent_note", extra.talent_note) +
         "</div>" +
-        '<div class="oa-field"><label>Talent names — one per line</label><textarea id="oaTalentText" rows="3">' + esc((extra.talent || []).join("\n")) + "</textarea></div>");
+        '<div id="oaTalentList"></div>');
     makeList($("#oaTeamList"), items, {
       thumb: "photo_url", thumbPhoto: true, titleKey: "name", addLabel: "Add team member",
       newItem: function(){ return { id: uid(), name: "", role: "", photo_url: "", bg: "", bio: "", visible: true }; },
@@ -4066,11 +4098,20 @@
       ]
     });
     makeList($("#oaCoreList"), extra.core, {
-      titleKey: "name", visible: false, addLabel: "Add core member",
-      newItem: function(){ return { name: "", role: "" }; },
+      thumb: "photo_url", thumbPhoto: true, titleKey: "name", visible: false, addLabel: "Add core member",
+      newItem: function(){ return { name: "", role: "", photo_url: "" }; },
       fields: [
         { k: "name", label: "Name", type: "text" },
-        { k: "role", label: "Role", type: "text" }
+        { k: "role", label: "Role", type: "text" },
+        { k: "photo_url", label: "Photo", type: "image" }
+      ]
+    });
+    makeList($("#oaTalentList"), extra.talent, {
+      thumb: "photo_url", thumbPhoto: true, titleKey: "name", visible: false, addLabel: "Add talent",
+      newItem: function(){ return { name: "", photo_url: "" }; },
+      fields: [
+        { k: "name", label: "Name", type: "text" },
+        { k: "photo_url", label: "Photo", type: "image" }
       ]
     });
     onSave($("#oaG-team"), function(){
@@ -4091,7 +4132,7 @@
         leads_subhead: v.leads_subhead, core_subhead: v.core_subhead, talent_subhead: v.talent_subhead,
         core: extra.core,
         talent_label: v.talent_label,
-        talent: $("#oaTalentText").value.split("\n").map(function(s){ return s.trim(); }).filter(Boolean),
+        talent: extra.talent.filter(function(t){ return t.name && t.name.trim(); }),
         talent_note: v.talent_note
       };
       return saveContent("team_extra", out).then(function(){ applyTeamExtra(out); });
