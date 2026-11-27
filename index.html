@@ -5,25 +5,26 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="color-scheme" content="dark" />
 <meta name="description" content="ONE.A is a marketing agency in Myanmar helping brands grow with human-written content, video, AI video production and monthly reporting. ONE TEAM, ONE VISION." />
+<link rel="canonical" href="https://oneagencymm.com/" />
 <link rel="icon" type="image/svg+xml" href="favicon.svg" />
 <link rel="apple-touch-icon" href="apple-touch-icon.png" />
 <meta name="theme-color" content="#0B0503" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Marketing Agency in Myanmar | ONE.A — ONE Agency, Yangon" />
 <meta property="og:description" content="ONE.A is a marketing agency in Myanmar helping brands grow with human-written content, video, AI video production and monthly reporting. ONE TEAM, ONE VISION." />
-<meta property="og:url" content="https://mookie247.github.io/one-a-website/" />
-<meta property="og:image" content="https://mookie247.github.io/one-a-website/og-image.jpg" />
+<meta property="og:url" content="https://oneagencymm.com/" />
+<meta property="og:image" content="https://oneagencymm.com/og-image.jpg" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="Marketing Agency in Myanmar | ONE.A — ONE Agency, Yangon" />
 <meta name="twitter:description" content="ONE.A is a marketing agency in Myanmar helping brands grow with human-written content, video, AI video production and monthly reporting. ONE TEAM, ONE VISION." />
-<meta name="twitter:image" content="https://mookie247.github.io/one-a-website/og-image.jpg" />
+<meta name="twitter:image" content="https://oneagencymm.com/og-image.jpg" />
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "ProfessionalService",
   "name": "ONE.A (ONE Agency)",
   "alternateName": ["ONE AGENCY", "The One Marketing Agency"],
-  "url": "https://mookie247.github.io/one-a-website/",
+  "url": "https://oneagencymm.com/",
   "telephone": "+959400926363",
   "slogan": "ONE TEAM, ONE VISION.",
   "description": "ONE.A is a marketing agency in Myanmar helping brands grow with human-written content, video, AI video production and monthly reporting. ONE TEAM, ONE VISION.",
@@ -208,12 +209,16 @@
   /* Full-screen menu overlay — the only navigation, on every screen size */
   .mobile-menu{
     position:fixed;inset:0;z-index:99;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    display:none;flex-direction:column;align-items:center;justify-content:center;
     padding:calc(var(--header-h) + 20px) 24px 40px;
     background:rgba(8,3,2,.86);
     opacity:0;visibility:hidden;pointer-events:none;
     transition:opacity .38s ease,visibility 0s linear .38s;
   }
+  /* .live is added by JS just before .open (and removed after the close
+     fade), so a closed menu is display:none — fully out of layout, tab
+     order and hit-testing — while the open/close fades still run. */
+  .mobile-menu.live{display:flex}
   .mobile-menu::before{
     content:"";position:absolute;inset:0;pointer-events:none;
     background:
@@ -2135,7 +2140,7 @@
       </div>
       <form class="brief reveal d1" id="briefForm" action="https://formsubmit.co/team@oneagencymm.com" method="POST" novalidate>
         <input type="hidden" name="_subject" value="New brief from ONE.A website" />
-        <input type="hidden" name="_next" value="https://mookie247.github.io/one-a-website/?brief=sent" />
+        <input type="hidden" name="_next" value="https://oneagencymm.com/?brief=sent" />
         <div class="field">
           <label for="fName">Your name <i>*</i></label>
           <input id="fName" name="name" type="text" placeholder="e.g. Aye Chan Moe" required />
@@ -2329,8 +2334,18 @@
      link tap, X tap, Esc, or a tap on the overlay outside the links. */
   var burger = document.getElementById("burger");
   var menu = document.getElementById("mobileMenu");
+  var menuHideTimer = null;
   function setMenu(open){
-    menu.classList.toggle("open", open);
+    if (open) {
+      if (menuHideTimer) { clearTimeout(menuHideTimer); menuHideTimer = null; }
+      menu.classList.add("live");
+      void menu.offsetWidth; /* reflow: start the fade from the hidden state */
+      menu.classList.add("open");
+    } else {
+      menu.classList.remove("open");
+      if (menuHideTimer) clearTimeout(menuHideTimer);
+      menuHideTimer = setTimeout(function(){ menu.classList.remove("live"); menuHideTimer = null; }, 420);
+    }
     burger.classList.toggle("open", open);
     burger.setAttribute("aria-expanded", open ? "true" : "false");
     burger.setAttribute("aria-label", open ? "Close menu" : "Open menu");
@@ -2661,7 +2676,7 @@
     });
     if (!valid) { ev.preventDefault(); return; }
     /* Valid: let the browser post to FormSubmit; it redirects back to
-       https://mookie247.github.io/one-a-website/?brief=sent */
+       https://oneagencymm.com/?brief=sent */
   });
   if (new URLSearchParams(window.location.search).get("brief") === "sent") {
     success.classList.add("show");

@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://mookie247.github.io/one-a-website/sitemap.xml
+Sitemap: https://oneagencymm.com/sitemap.xml
