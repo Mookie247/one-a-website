@@ -2694,5 +2694,1643 @@
   }
 })();
 </script>
+
+<!-- ================= SITE CONTROL (hidden; opens from the header logo) ================= -->
+<style>
+  /* ---------- Control panel / PIN gate ---------- */
+  body.oa-lock{overflow:hidden}
+  .oa-overlay{
+    position:fixed;inset:0;z-index:500;display:flex;align-items:center;justify-content:center;
+    padding:18px;background:rgba(5,2,1,.78);
+    backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);
+    opacity:0;visibility:hidden;pointer-events:none;
+    transition:opacity .35s ease,visibility 0s linear .35s;
+  }
+  .oa-overlay.open{opacity:1;visibility:visible;pointer-events:auto;transition:opacity .35s ease}
+  .oa-card{
+    position:relative;width:100%;max-width:400px;text-align:center;
+    background:rgba(18,8,4,.92);border:1px solid rgba(255,255,255,.14);border-radius:22px;
+    padding:38px 32px 32px;box-shadow:0 40px 80px -30px rgba(0,0,0,.85);
+    transform:translateY(24px) scale(.96);opacity:0;
+    transition:transform .55s cubic-bezier(.34,1.56,.64,1),opacity .3s ease;
+  }
+  .oa-overlay.open .oa-card{transform:none;opacity:1}
+  .oa-card .oa-mark{margin:0 auto 16px;width:56px;height:56px}
+  .oa-card h3{font-size:1.5rem;font-weight:800;letter-spacing:.05em}
+  .oa-card h3 small{display:block;font-size:.6rem;font-weight:600;letter-spacing:.34em;color:var(--faint);margin-top:4px}
+  .oa-sub{color:var(--muted);font-size:.94rem;margin:12px 0 22px}
+  .oa-pin{
+    width:100%;text-align:center;font-family:var(--font);font-size:1.5rem;font-weight:700;letter-spacing:.5em;
+    color:var(--ink);background:rgba(0,0,0,.5);border:1px solid var(--line);border-radius:14px;
+    padding:14px 10px 14px 18px;min-height:60px;margin-bottom:12px;
+  }
+  .oa-pin:focus{outline:2px solid var(--prime);outline-offset:1px;border-color:transparent}
+  .oa-card .btn{width:100%;margin-top:6px}
+  .oa-cancel{
+    margin-top:14px;background:none;border:none;color:var(--faint);font-size:.92rem;font-weight:600;
+    padding:10px 16px;min-height:44px;border-radius:10px;transition:color .2s ease;
+  }
+  .oa-cancel:hover{color:#fff}
+  .oa-err{display:none;color:#ff9d7a;font-size:.9rem;margin-top:14px;line-height:1.5}
+  .oa-err.show{display:block;animation:oaShake .4s ease}
+  @keyframes oaShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .oa-x{
+    position:absolute;top:12px;right:12px;width:40px;height:40px;border-radius:50%;
+    background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--muted);
+    font-size:1.25rem;line-height:1;display:flex;align-items:center;justify-content:center;
+    transition:border-color .2s ease,color .2s ease;z-index:2;
+  }
+  .oa-x:hover{border-color:var(--prime);color:#fff}
+
+  .oa-panelwrap{padding:14px}
+  .oa-panel{
+    position:relative;width:100%;max-width:1060px;height:100%;max-height:100%;
+    display:flex;flex-direction:column;overflow:hidden;
+    background:rgba(14,6,3,.94);border:1px solid rgba(255,255,255,.14);border-radius:22px;
+    box-shadow:0 40px 90px -30px rgba(0,0,0,.9);
+    transform:translateY(30px) scale(.97);opacity:0;
+    transition:transform .55s cubic-bezier(.34,1.56,.64,1),opacity .3s ease;
+  }
+  .oa-overlay.open .oa-panel{transform:none;opacity:1}
+  .oa-phead{
+    display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+    padding:16px 20px;border-bottom:1px solid var(--line);flex-shrink:0;
+  }
+  .oa-ptitle{display:flex;align-items:center;gap:11px;font-weight:800;font-size:1.05rem;letter-spacing:.05em;line-height:1.1}
+  .oa-ptitle small{display:block;font-size:.56rem;font-weight:600;letter-spacing:.3em;color:var(--faint);margin-top:2px}
+  .oa-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto;margin-right:44px}
+  .oa-tabs button{
+    background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--muted);
+    font-size:.86rem;font-weight:600;padding:9px 15px;border-radius:999px;min-height:40px;
+    transition:border-color .2s ease,color .2s ease,background .2s ease;
+  }
+  .oa-tabs button:hover{color:#fff;border-color:rgba(245,99,33,.6)}
+  .oa-tabs button.active{background:var(--prime);border-color:var(--prime);color:#fff}
+  .oa-phead .oa-x{top:14px;right:14px}
+  .oa-pbody{overflow-y:auto;padding:22px 20px 30px;flex:1;-webkit-overflow-scrolling:touch}
+  .oa-tabpane[hidden]{display:none}
+  .oa-group{
+    border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:18px;
+    background:rgba(255,255,255,.03);
+  }
+  .oa-group > h4{font-size:1rem;font-weight:700;margin-bottom:4px}
+  .oa-group > h4 .accent{color:var(--prime)}
+  .oa-gnote{color:var(--faint);font-size:.85rem;margin-bottom:14px;line-height:1.55}
+  .oa-grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .oa-field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px;min-width:0}
+  .oa-field label{font-size:.74rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+  .oa-field input,.oa-field textarea,.oa-field select{
+    font-family:var(--font);font-size:.93rem;color:var(--ink);width:100%;
+    background:rgba(0,0,0,.45);border:1px solid var(--line);border-radius:10px;
+    padding:11px 13px;min-height:44px;
+  }
+  .oa-field textarea{min-height:74px;resize:vertical;line-height:1.55}
+  .oa-field input:focus,.oa-field textarea:focus,.oa-field select:focus{outline:2px solid var(--prime);outline-offset:1px;border-color:transparent}
+  .oa-save-row{display:flex;align-items:center;gap:14px;margin-top:6px;flex-wrap:wrap}
+  .oa-save-row .btn{min-height:46px;padding:11px 24px;font-size:.9rem}
+  .oa-saved-msg{color:#ffb59a;font-size:.88rem;font-weight:600;opacity:0;transition:opacity .3s ease}
+  .oa-saved-msg.show{opacity:1}
+  .oa-subgroup{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}
+  .oa-subgroup:first-of-type{border-top:none;padding-top:2px;margin-top:2px}
+  .oa-subgroup > h5{font-size:.92rem;font-weight:700;color:var(--prime-2);margin-bottom:12px}
+
+  .oa-item{
+    border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px;
+    background:rgba(0,0,0,.28);
+  }
+  .oa-item-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .oa-thumb{
+    width:54px;height:54px;border-radius:9px;background:#000;border:1px solid var(--line);
+    object-fit:contain;flex-shrink:0;
+  }
+  .oa-thumb-photo{object-fit:cover}
+  .oa-item-title{font-weight:700;font-size:.95rem;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .oa-iconbtn{
+    width:36px;height:36px;border-radius:9px;flex-shrink:0;
+    background:rgba(255,255,255,.05);border:1px solid var(--line);color:var(--muted);
+    font-size:.95rem;display:flex;align-items:center;justify-content:center;
+    transition:border-color .2s ease,color .2s ease;
+  }
+  .oa-iconbtn:hover{border-color:var(--prime);color:#fff}
+  .oa-iconbtn.danger:hover{border-color:#ff5a3c;color:#ff9d7a}
+  .oa-imgrow{display:flex;gap:8px}
+  .oa-imgrow input{flex:1;min-width:0}
+  .oa-upbtn{
+    flex-shrink:0;background:rgba(239,67,3,.14);border:1px solid rgba(245,99,33,.5);color:#ffb59a;
+    border-radius:10px;padding:0 14px;font-size:.84rem;font-weight:600;min-height:44px;
+    transition:background .2s ease;
+  }
+  .oa-upbtn:hover{background:rgba(239,67,3,.26)}
+  .oa-switch{display:inline-flex;align-items:center;gap:8px;cursor:pointer;flex-shrink:0}
+  .oa-switch input{position:absolute;opacity:0;width:0;height:0}
+  .oa-switch .track{
+    width:42px;height:24px;border-radius:999px;background:rgba(255,255,255,.14);position:relative;
+    transition:background .25s ease;flex-shrink:0;
+  }
+  .oa-switch .track::after{
+    content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;
+    transition:transform .3s cubic-bezier(.34,1.56,.64,1);
+  }
+  .oa-switch input:checked + .track{background:var(--prime)}
+  .oa-switch input:checked + .track::after{transform:translateX(18px)}
+  .oa-switch .sw-lbl{font-size:.8rem;color:var(--muted);font-weight:600}
+  .oa-addbtn{
+    width:100%;background:none;border:1.5px dashed rgba(245,99,33,.5);color:#ffb59a;border-radius:12px;
+    padding:13px;font-size:.92rem;font-weight:600;min-height:48px;transition:background .2s ease,border-color .2s ease;
+  }
+  .oa-addbtn:hover{background:rgba(239,67,3,.1);border-color:var(--prime)}
+  .oa-toast{
+    position:absolute;left:50%;bottom:22px;transform:translate(-50%,18px);z-index:5;
+    background:rgba(10,4,2,.95);border:1px solid rgba(245,99,33,.6);color:#fff;
+    border-radius:999px;padding:12px 22px;font-size:.9rem;font-weight:600;white-space:nowrap;
+    opacity:0;pointer-events:none;transition:opacity .3s ease,transform .45s cubic-bezier(.34,1.56,.64,1);
+    box-shadow:0 18px 40px -14px rgba(0,0,0,.8);
+  }
+  .oa-toast.show{opacity:1;transform:translate(-50%,0)}
+  .team-photo{width:56px;height:56px;border-radius:50%;object-fit:cover;flex-shrink:0;background:#000}
+  @media (max-width:700px){
+    .oa-grid2{grid-template-columns:1fr}
+    .oa-phead{gap:10px;padding:14px 16px}
+    .oa-tabs{margin-right:0;order:3;width:100%}
+    .oa-pbody{padding:16px 14px 26px}
+    .oa-group{padding:16px 14px}
+    .oa-panelwrap{padding:0}
+    .oa-panel{border-radius:0;border:none}
+  }
+</style>
+
+<div class="oa-overlay" id="oaLogin" aria-hidden="true">
+  <div class="oa-card" role="dialog" aria-modal="true" aria-label="ONE.A site control sign in">
+    <button class="oa-x" id="oaLoginClose" type="button" aria-label="Close">×</button>
+    <svg class="oa-mark" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" fill="#EF4303"/><path d="M62 102 L62 22 L46 22 L46 44 L28 44 L28 58 L46 58 L46 102 Z" fill="#FFFFFF"/></svg>
+    <h3>ONE.A<small>ONE AGENCY</small></h3>
+    <p class="oa-sub" id="oaLoginSub">Checking…</p>
+    <div id="oaLoginBody"></div>
+    <p class="oa-err" id="oaLoginErr" role="alert"></p>
+    <button class="oa-cancel" id="oaLoginCancel" type="button">Cancel</button>
+  </div>
+</div>
+
+<div class="oa-overlay oa-panelwrap" id="oaPanel" aria-hidden="true">
+  <div class="oa-panel" role="dialog" aria-modal="true" aria-label="ONE.A control panel">
+    <div class="oa-phead">
+      <div class="oa-ptitle">
+        <svg width="34" height="34" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="48" fill="#EF4303"/><path d="M62 102 L62 22 L46 22 L46 44 L28 44 L28 58 L46 58 L46 102 Z" fill="#FFFFFF"/></svg>
+        <span>ONE.A<small>CONTROL PANEL</small></span>
+      </div>
+      <nav class="oa-tabs" id="oaTabs" aria-label="Control panel sections">
+        <button type="button" data-tab="content" class="active">Content</button>
+        <button type="button" data-tab="media">Logos &amp; Images</button>
+        <button type="button" data-tab="team">Team</button>
+        <button type="button" data-tab="videos">Videos</button>
+        <button type="button" data-tab="settings">Settings</button>
+      </nav>
+      <button class="oa-x" id="oaPanelClose" type="button" aria-label="Close panel">×</button>
+    </div>
+    <div class="oa-pbody" id="oaPBody">
+      <section class="oa-tabpane" data-pane="content"></section>
+      <section class="oa-tabpane" data-pane="media" hidden></section>
+      <section class="oa-tabpane" data-pane="team" hidden></section>
+      <section class="oa-tabpane" data-pane="videos" hidden></section>
+      <section class="oa-tabpane" data-pane="settings" hidden></section>
+    </div>
+    <div class="oa-toast" id="oaToast" role="status"></div>
+  </div>
+</div>
+<input type="file" id="oaFile" accept="image/*" hidden />
+<script>
+(function(){
+  "use strict";
+  /* ============================================================
+     ONE.A site control — hidden editor opened from the header logo.
+     SECURITY NOTE: the Supabase anon key is public and permits writes;
+     the PIN screen is the only access control, same as the
+     F5 Money Exchange admin setup. The PIN itself is never stored,
+     displayed or logged — only its SHA-256 hash lives in admin_auth.
+     If the backend is unreachable or a table is empty, the page keeps
+     its hardcoded content exactly as shipped.
+
+     The database is reached with plain fetch (PostgREST + Storage
+     REST) through the small client below — deliberately NOT the
+     supabase-js library. That library had to load from a CDN (one
+     blocked script left the panel dead), and its auth layer reads
+     localStorage and takes Web Locks on every query, which throw
+     inside this page's sandboxed frame and made every database call
+     fail with "Could not reach the site database" while the database
+     itself was up. Plain fetch needs no library, no storage and no
+     locks. Every call resolves { data, error } and never rejects,
+     matching how the code below already checks results.
+     ============================================================ */
+  var SB_URL = "https://vxbvpeolvehocxnnbfrl.supabase.co";
+  var SB_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4YnZwZW9sdmVob2N4bm5iZnJsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTU3NTY4MTIsImV4cCI6MjExMTMzMjgxMn0.7P24v4Mjpg8x0xXBIN98Vx4JPYO_mATIhjTn1qdlDFc";
+  function sbHeaders(extra){
+    var h = { "apikey": SB_ANON, "Authorization": "Bearer " + SB_ANON };
+    if (extra) for (var k in extra) h[k] = extra[k];
+    return h;
+  }
+  function sbFetch(url, opts){
+    var ctrl = ("AbortController" in window) ? new AbortController() : null;
+    var timer = ctrl ? setTimeout(function(){ ctrl.abort(); }, 15000) : null;
+    if (ctrl) opts.signal = ctrl.signal;
+    return fetch(url, opts).then(function(res){
+      if (timer) clearTimeout(timer);
+      return res;
+    }, function(err){
+      if (timer) clearTimeout(timer);
+      throw err;
+    });
+  }
+  function SbQuery(table){
+    this.table = table;
+    this.method = "GET";
+    this.params = [];
+    this.filters = [];
+    this.body = null;
+    this.prefer = "";
+    this.single = false;
+    this._promise = null;
+  }
+  SbQuery.prototype.select = function(cols){
+    this.method = "GET";
+    this.params.push(["select", cols || "*"]);
+    return this;
+  };
+  SbQuery.prototype.order = function(col, opts){
+    var dir = (opts && opts.ascending === false) ? "desc" : "asc";
+    for (var i = 0; i < this.params.length; i++) {
+      if (this.params[i][0] === "order") { this.params[i][1] += "," + col + "." + dir; return this; }
+    }
+    this.params.push(["order", col + "." + dir]);
+    return this;
+  };
+  SbQuery.prototype.eq = function(col, val){
+    this.filters.push([col, "eq." + val]);
+    return this;
+  };
+  SbQuery.prototype.in = function(col, vals){
+    var list = vals.map(function(v){ return '"' + String(v).replace(/"/g, '\\"') + '"'; }).join(",");
+    this.filters.push([col, "in.(" + list + ")"]);
+    return this;
+  };
+  SbQuery.prototype.maybeSingle = function(){ this.single = true; return this; };
+  SbQuery.prototype.insert = function(rows){
+    this.method = "POST"; this.body = rows; this.prefer = "return=minimal";
+    return this;
+  };
+  SbQuery.prototype.upsert = function(rows, opts){
+    this.method = "POST"; this.body = rows;
+    this.prefer = "resolution=merge-duplicates,return=minimal";
+    if (opts && opts.onConflict) this.params.push(["on_conflict", opts.onConflict]);
+    return this;
+  };
+  SbQuery.prototype.update = function(patch){
+    this.method = "PATCH"; this.body = patch; this.prefer = "return=minimal";
+    return this;
+  };
+  SbQuery.prototype.delete = function(){
+    this.method = "DELETE"; this.prefer = "return=minimal";
+    return this;
+  };
+  SbQuery.prototype._exec = function(){
+    var self = this;
+    var pairs = this.params.concat(this.filters);
+    var qs = pairs.map(function(p){
+      return encodeURIComponent(p[0]) + "=" + encodeURIComponent(p[1]);
+    }).join("&");
+    var url = SB_URL + "/rest/v1/" + encodeURIComponent(this.table) + (qs ? "?" + qs : "");
+    var headers = sbHeaders();
+    var opts = { method: this.method, headers: headers };
+    if (this.single) headers["Accept"] = "application/vnd.pgrst.object+json";
+    if (this.body != null) {
+      headers["Content-Type"] = "application/json";
+      opts.body = JSON.stringify(this.body);
+    }
+    if (this.prefer) headers["Prefer"] = this.prefer;
+    return sbFetch(url, opts).then(function(res){
+      return res.text().then(function(text){
+        var data = null;
+        if (text) { try { data = JSON.parse(text); } catch (e) { data = null; } }
+        if (self.single && res.status === 406) return { data: null, error: null };
+        if (!res.ok) {
+          var msg = (data && (data.message || data.error)) || ("Request failed (" + res.status + ")");
+          return { data: null, error: new Error(msg) };
+        }
+        return { data: data, error: null };
+      });
+    }).catch(function(err){
+      return { data: null, error: (err instanceof Error) ? err : new Error("Network error") };
+    });
+  };
+  SbQuery.prototype.then = function(onF, onR){
+    if (!this._promise) this._promise = this._exec();
+    return this._promise.then(onF, onR);
+  };
+  SbQuery.prototype.catch = function(onR){
+    if (!this._promise) this._promise = this._exec();
+    return this._promise.catch(onR);
+  };
+  var sb = {
+    from: function(table){ return new SbQuery(table); },
+    storage: {
+      from: function(bucket){
+        return {
+          upload: function(path, file, opts){
+            var headers = sbHeaders({ "Content-Type": (file && file.type) || "application/octet-stream" });
+            if (opts && opts.upsert) headers["x-upsert"] = "true";
+            return sbFetch(SB_URL + "/storage/v1/object/" + bucket + "/" + path, { method: "POST", headers: headers, body: file })
+              .then(function(res){
+                if (!res.ok) return res.text().then(function(t){
+                  var m = t;
+                  try { m = JSON.parse(t).message || t; } catch (e) { /* keep raw text */ }
+                  return { data: null, error: new Error(m || ("Upload failed (" + res.status + ")")) };
+                });
+                return { data: { path: path }, error: null };
+              })
+              .catch(function(err){ return { data: null, error: err }; });
+          },
+          getPublicUrl: function(path){
+            return { data: { publicUrl: SB_URL + "/storage/v1/object/public/" + bucket + "/" + path } };
+          }
+        };
+      }
+    }
+  };
+
+  /* ---------- small helpers ---------- */
+  function $(s, r){ return (r || document).querySelector(s); }
+  function $$(s, r){ return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
+  function esc(s){
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  }
+  function uid(){
+    if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c){
+      var r = Math.random() * 16 | 0, v = c === "x" ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
+  /* Rich-text notation used by the editor: [words] render as the orange
+     accent in headings, or as <b>/<strong> in labels. */
+  function richA(s){
+    return esc(s).replace(/\[([^\]]+)\]/g, '<span class="accent">$1</span>');
+  }
+  function richB(s){
+    return esc(s).replace(/\[([^\]]+)\]/g, "<b>$1</b>").replace(/\n/g, "<br>");
+  }
+  function richS(s){
+    return esc(s).replace(/\[([^\]]+)\]/g, "<strong>$1</strong>");
+  }
+  /* Read an element's current on-page content back into [..] notation so the
+     editor pre-fills from live text. mode: 'a' accent spans, 'b' <b>, 's' <strong>. */
+  function domRich(el, mode){
+    if (!el) return "";
+    var out = [];
+    (function walk(node){
+      Array.prototype.slice.call(node.childNodes).forEach(function(ch){
+        if (ch.nodeType === 3) { out.push(ch.textContent); return; }
+        if (ch.nodeType !== 1) return;
+        if (ch.tagName === "BR") { out.push("\n"); return; }
+        var isMark = (mode === "a" && ch.classList && ch.classList.contains("accent")) ||
+                     (mode === "b" && ch.tagName === "B") ||
+                     (mode === "s" && ch.tagName === "STRONG");
+        if (isMark) { out.push("[" + ch.textContent + "]"); return; }
+        walk(ch);
+      });
+    })(el);
+    return out.join("").split("\n").map(function(line){
+      return line.replace(/\s+/g, " ").trim();
+    }).join("\n").trim();
+  }
+  function txt(el){ return el ? el.textContent.replace(/\s+/g, " ").trim() : ""; }
+
+  /* ---------- state: whatever Supabase holds (null = keep hardcoded) ---------- */
+  var DB = { content: {}, media: { marquee: null, intro: null }, team: null, videos: null, loaded: false };
+  function contentOr(key, scrapeFn){
+    return DB.content[key] !== undefined ? DB.content[key] : scrapeFn();
+  }
+
+  /* ---------- scrapers: current on-page values (editor pre-fill + fallback) ---------- */
+  function scrapeHero(){
+    var chip = $(".slogan-chip");
+    var slogan = chip ? chip.textContent.replace(/\s+/g, " ").trim() : "";
+    return {
+      lines: $$(".hero h1 .h-line").map(function(l){ return domRich(l, "a"); }),
+      slogan: slogan,
+      sub: txt($(".hero-sub")),
+      proof: domRich($(".hero-proof"), "s")
+    };
+  }
+  var SECTION_DEFS = [
+    { key: "services",   name: "Our Craft — Services",        sel: "#services",   lede: ".section-lede" },
+    { key: "industries", name: "Industries",                  sel: "#industries", lede: null },
+    { key: "work",       name: "Our Impact — Work",           sel: "#work",       lede: ".section-lede" },
+    { key: "videos",     name: "The Studio — Videos",         sel: "#videos",     lede: ".section-lede" },
+    { key: "social",     name: "Digital Influence — Social",  sel: "#social",     lede: ".section-lede" },
+    { key: "about",      name: "Our Story — About",           sel: "#about",      lede: ".section-lede" },
+    { key: "team",       name: "Our Folks — Team heading",    sel: "#team",       lede: null },
+    { key: "process",    name: "Process heading",             sel: ".process-sec", lede: null },
+    { key: "ai",         name: "AI Video band",               sel: "#ai-video",   lede: ".ai-band p", titleSel: ".ai-band h2", eyebrowSel: ".ai-band .eyebrow" },
+    { key: "insights",   name: "ONE Notes — Insights",        sel: "#insights",   lede: null },
+    { key: "faq",        name: "FAQ heading",                 sel: "#faq",        lede: null },
+    { key: "contact",    name: "Let's Talk — Contact",        sel: "#contact",    lede: ".contact-intro" }
+  ];
+  function sectionEls(def){
+    var root = $(def.sel);
+    if (!root) return {};
+    return {
+      root: root,
+      eyebrow: $(def.eyebrowSel || ".eyebrow", root),
+      title: $(def.titleSel || ".section-title", root),
+      lede: def.lede ? $(def.lede, root) : null
+    };
+  }
+  function scrapeSections(){
+    var out = {};
+    SECTION_DEFS.forEach(function(def){
+      var els = sectionEls(def);
+      if (!els.title && !els.eyebrow) return;
+      var item = { eyebrow: txt(els.eyebrow), title: domRich(els.title, "a") };
+      if (def.lede) item.lede = txt(els.lede);
+      out[def.key] = item;
+    });
+    return out;
+  }
+  function scrapeAboutExtra(){
+    var mv = $$("#about .mv-card");
+    var subs = $$("#about .subhead");
+    return {
+      pos: txt($(".about-pos")),
+      mission_title: mv[0] ? domRich($("h3", mv[0]), "a") : "",
+      mission: mv[0] ? txt($("p", mv[0])) : "",
+      vision_title: mv[1] ? domRich($("h3", mv[1]), "a") : "",
+      vision: mv[1] ? txt($("p", mv[1])) : "",
+      close: domRich($(".about-close"), "a"),
+      diff_subhead: subs[0] ? domRich(subs[0], "a") : "",
+      values_subhead: subs[1] ? domRich(subs[1], "a") : ""
+    };
+  }
+  function scrapeServices(){
+    return $$(".svc-grid .svc").map(function(card, ci){
+      var list = $(".svc-list", card);
+      var paras = $$("p", card).filter(function(p){ return !p.classList.contains("svc-note"); });
+      var go = $(".go", card);
+      return {
+        title: txt($("h3", card)),
+        kind: list ? "list" : "text",
+        items: list ? $$("li", list).map(function(li){ return txt(li); }) : [],
+        text: paras.length ? txt(paras[0]) : "",
+        note: txt($(".svc-note", card)),
+        icon: ci,
+        wide: card.classList.contains("svc-wide"),
+        go_text: go ? go.childNodes[0].textContent.replace(/\s+/g, " ").trim() : "Start a project",
+        go_href: go ? go.getAttribute("href") : "#contact"
+      };
+    });
+  }
+  function scrapeCounters(){
+    return $$(".numbers-band .stat").map(function(stat){
+      var count = $(".count", stat);
+      var em = $(".num em", stat);
+      return {
+        target: count ? count.getAttribute("data-target") : "",
+        decimals: count ? (count.getAttribute("data-decimals") || "0") : "0",
+        suffix: em ? em.textContent : "",
+        label: domRich($(".lbl", stat), "b")
+      };
+    });
+  }
+  function scrapeContact(){
+    var out = { address: "", phone_display: "", phone_tel: "", working: "" };
+    $$(".contact-facts > div").forEach(function(div){
+      var label = txt($("b", div));
+      var span = $("span", div);
+      if (!span) return;
+      if (label === "Studio") out.address = txt(span);
+      else if (label === "Phone") {
+        var a = $("a", span);
+        out.phone_display = txt(span);
+        out.phone_tel = a ? a.getAttribute("href").replace(/^tel:/, "") : "";
+      } else if (label === "Working on") out.working = txt(span);
+    });
+    return out;
+  }
+  function scrapeFooter(){
+    var brand = $(".foot-brand");
+    var paras = brand ? $$("p", brand).filter(function(p){ return !p.classList.contains("foot-formerly"); }) : [];
+    var spans = $$(".foot-bottom span");
+    return {
+      tagline: paras.length ? txt(paras[0]) : "",
+      formerly: txt($(".foot-formerly")),
+      bottom_left: spans[0] ? domRich(spans[0], "b") : "",
+      bottom_right: spans[1] ? txt(spans[1]) : ""
+    };
+  }
+  function scrapeTrustMore(){
+    return $$(".trust-more .trust-tile").map(function(t){ return txt(t); });
+  }
+  function scrapeLogoList(){
+    var set = $(".marquee-track .logo-set");
+    if (!set) return [];
+    return $$("img", set).map(function(img){
+      return {
+        id: uid(),
+        label: (img.getAttribute("alt") || "").replace(/\s+logo$/i, ""),
+        image_url: img.getAttribute("src") || "",
+        visible: true
+      };
+    });
+  }
+  function scrapeSocial(){
+    return $$(".social-grid .post-card").map(function(card){
+      var a = $(".post-media", card);
+      var img = a ? $("img", a) : null;
+      return {
+        brand: txt($(".post-brand", card)),
+        title: txt($(".post-title", card)),
+        tag: txt($(".post-tag", card)) || "Social Post",
+        detail: txt($(".post-detail", card)),
+        image_url: img ? img.getAttribute("src") : "",
+        post_url: a ? a.getAttribute("href") : "",
+        visible: true
+      };
+    });
+  }
+  function scrapeTeam(){
+    var bio = {};
+    var rows = $$(".team-grid .team-card").map(function(card){
+      var id = uid();
+      var photo = $("img.team-photo", card);
+      bio[id] = { bg: txt($(".team-bg", card)), bio: txt($(".team-bio", card)) };
+      return {
+        id: id,
+        name: txt($("h3", card)),
+        role: txt($(".team-role", card)),
+        photo_url: photo ? photo.getAttribute("src") : "",
+        visible: true
+      };
+    });
+    return { rows: rows, bio: bio };
+  }
+  function scrapeTeamExtra(){
+    var subs = $$("#team .subhead");
+    return {
+      leads_subhead: subs[0] ? domRich(subs[0], "a") : "",
+      core_subhead: subs[1] ? domRich(subs[1], "a") : "",
+      talent_subhead: subs[2] ? domRich(subs[2], "a") : "",
+      core: $$(".core-grid .core-card").map(function(c){
+        return { name: txt($("b", c)), role: txt($("span", c)) };
+      }),
+      talent_label: txt($(".talent-lbl")),
+      talent: $$(".talent-row .talent-chip").map(function(c){ return txt(c); }),
+      talent_note: txt($(".talent-note"))
+    };
+  }
+  function scrapeVideos(){
+    var out = [];
+    function grab(grid, group){
+      if (!grid) return;
+      $$(".vid-card", grid).forEach(function(card){
+        var video = $("video", card);
+        var source = video ? $("source", video) : null;
+        out.push({
+          id: uid(),
+          title: txt($(".vid-title", card)),
+          video_url: source ? source.getAttribute("src") : "",
+          poster_url: video ? (video.getAttribute("poster") || "") : "",
+          brand: txt($(".vid-brand", card)),
+          detail: txt($(".vid-detail", card)),
+          dur: txt($(".vid-dur", card)),
+          aspect: video ? (video.style.aspectRatio || "") : "",
+          group: group,
+          visible: true
+        });
+      });
+    }
+    grab($(".vid-grid:not(.vid-grid--reels)"), "motion");
+    grab($(".vid-grid--reels"), "reels");
+    return out;
+  }
+  /* ---------- apply: write state into the live DOM ---------- */
+  function markIn(scope){
+    /* Re-rendered blocks join the page already settled (the reveal system
+       only observes elements present at first paint). */
+    $$(".reveal, .tx", scope).forEach(function(el){ el.classList.add("in"); });
+  }
+  function applyHero(h){
+    if (!h) return;
+    if (Array.isArray(h.lines)) {
+      var lines = $$(".hero h1 .h-line");
+      h.lines.forEach(function(line, i){
+        if (lines[i] && line != null) lines[i].innerHTML = richA(line);
+      });
+    }
+    if (h.sub != null) { var sub = $(".hero-sub"); if (sub) sub.textContent = h.sub; }
+    if (h.slogan != null) {
+      var chip = $(".slogan-chip");
+      if (chip) chip.innerHTML = "<i></i>" + esc(h.slogan);
+    }
+    if (h.proof != null) { var proof = $(".hero-proof"); if (proof) proof.innerHTML = richS(h.proof); }
+  }
+  function applySections(s){
+    if (!s) return;
+    SECTION_DEFS.forEach(function(def){
+      var item = s[def.key];
+      if (!item) return;
+      var els = sectionEls(def);
+      if (item.eyebrow != null && els.eyebrow) els.eyebrow.textContent = item.eyebrow;
+      if (item.title != null && els.title) els.title.innerHTML = richA(item.title);
+      if (item.lede != null && els.lede) els.lede.textContent = item.lede;
+    });
+  }
+  function applyAboutExtra(a){
+    if (!a) return;
+    if (a.pos != null) { var pos = $(".about-pos"); if (pos) pos.textContent = a.pos; }
+    var mv = $$("#about .mv-card");
+    if (mv[0]) {
+      if (a.mission_title != null) { var h = $("h3", mv[0]); if (h) h.innerHTML = richA(a.mission_title); }
+      if (a.mission != null) { var p = $("p", mv[0]); if (p) p.textContent = a.mission; }
+    }
+    if (mv[1]) {
+      if (a.vision_title != null) { var h2 = $("h3", mv[1]); if (h2) h2.innerHTML = richA(a.vision_title); }
+      if (a.vision != null) { var p2 = $("p", mv[1]); if (p2) p2.textContent = a.vision; }
+    }
+    if (a.close != null) { var cl = $(".about-close"); if (cl) cl.innerHTML = richA(a.close); }
+    var subs = $$("#about .subhead");
+    if (a.diff_subhead != null && subs[0]) subs[0].innerHTML = richA(a.diff_subhead);
+    if (a.values_subhead != null && subs[1]) subs[1].innerHTML = richA(a.values_subhead);
+  }
+  /* Service icons are a fixed in-code set, chosen by index only. Stored
+     content never supplies raw HTML for the icon slot, so nothing saved
+     through the backend can inject markup into the page. */
+  var SVG_OPEN = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">';
+  var SERVICE_ICONS = [
+    SVG_OPEN + '<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>',
+    SVG_OPEN + '<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>',
+    SVG_OPEN + '<path d="M3 21h18"/><path d="M7 17v-6M12 17V7M17 17v-3"/></svg>',
+    SVG_OPEN + '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.2 3.4-5 6.5-5s5.7 1.8 6.5 5"/><circle cx="17.5" cy="9" r="2.5"/><path d="M16 15.2c2.9.3 4.9 1.9 5.5 4.8"/></svg>',
+    SVG_OPEN + '<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/><path d="M8 11h6M11 8v6"/></svg>',
+    SVG_OPEN + '<circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18" fill="currentColor" stroke="none" opacity=".35"/><path d="M8 12h8"/></svg>',
+    SVG_OPEN + '<path d="M12 3l1.9 4.6L18.5 9l-4.6 1.9L12 15.5l-1.9-4.6L5.5 9l4.6-1.4z"/><path d="M19 15l.9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9z"/></svg>'
+  ];
+  var DEFAULT_ICON = SERVICE_ICONS[6];
+  function applyServices(list){
+    if (!Array.isArray(list) || !list.length) return;
+    var grid = $(".svc-grid");
+    if (!grid) return;
+    grid.innerHTML = list.map(function(item, idx){
+      var body = "";
+      if (item.kind === "list") {
+        body = '<ul class="svc-list">' + (item.items || []).map(function(li){
+          return '<li class="in">' + esc(li) + "</li>";
+        }).join("") + "</ul>";
+      } else if (item.text) {
+        body = '<p class="in">' + esc(item.text) + "</p>";
+      }
+      var note = item.note ? '<p class="svc-note in">' + esc(item.note) + "</p>" : "";
+      var iconIdx = parseInt(item.icon, 10);
+      if (isNaN(iconIdx)) iconIdx = idx;
+      var icon = SERVICE_ICONS[iconIdx] || DEFAULT_ICON;
+      return '<article class="svc reveal in' + (item.wide ? " svc-wide" : "") + '">' +
+        '<div class="ic">' + icon + "</div>" +
+        '<h3 class="in">' + esc(item.title) + "</h3>" + body + note +
+        '<a class="go in" href="' + esc(item.go_href || "#contact") + '">' + esc(item.go_text || "Start a project") + ' <span class="arr">→</span></a>' +
+        "</article>";
+    }).join("");
+  }
+  function applyAlsoChips(list){
+    if (!Array.isArray(list)) return;
+    var row = $(".also-row");
+    if (!row) return;
+    $$(".chip", row).forEach(function(c){ c.remove(); });
+    list.forEach(function(name){
+      var span = document.createElement("span");
+      span.className = "chip in";
+      span.textContent = name;
+      row.appendChild(span);
+    });
+  }
+  function applyIndustries(list){
+    if (!Array.isArray(list)) return;
+    var grid = $(".ind-grid");
+    if (!grid) return;
+    grid.innerHTML = list.map(function(name){
+      return '<span class="ind-chip in">' + esc(name) + "</span>";
+    }).join("");
+  }
+  function applyCounters(list){
+    if (!Array.isArray(list)) return;
+    var stats = $$(".numbers-band .stat");
+    list.forEach(function(c, i){
+      var stat = stats[i];
+      if (!stat) return;
+      var count = $(".count", stat);
+      if (count && c.target !== "" && c.target != null) {
+        count.setAttribute("data-target", c.target);
+        count.setAttribute("data-decimals", c.decimals || "0");
+        if (count.getAttribute("data-done")) {
+          var n = parseFloat(c.target);
+          count.textContent = isNaN(n) ? c.target : n.toFixed(parseInt(c.decimals || "0", 10));
+        }
+      }
+      var num = $(".num", stat);
+      if (num && c.suffix != null) {
+        var em = $("em", num);
+        if (c.suffix === "") { if (em) em.remove(); }
+        else if (em) em.textContent = c.suffix;
+        else { em = document.createElement("em"); em.textContent = c.suffix; num.appendChild(em); }
+      }
+      var lbl = $(".lbl", stat);
+      if (lbl && c.label != null) lbl.innerHTML = richB(c.label);
+    });
+  }
+  function applyContact(ct){
+    if (!ct) return;
+    $$(".contact-facts > div").forEach(function(div){
+      var label = txt($("b", div));
+      var span = $("span", div);
+      if (!span) return;
+      if (label === "Studio" && ct.address != null) span.textContent = ct.address;
+      else if (label === "Phone" && ct.phone_display != null) {
+        span.innerHTML = '<a href="tel:' + esc(ct.phone_tel || ct.phone_display.replace(/\s/g, "")) + '">' + esc(ct.phone_display) + "</a>";
+      } else if (label === "Working on" && ct.working != null) span.textContent = ct.working;
+    });
+  }
+  function applyFooter(f){
+    if (!f) return;
+    var brand = $(".foot-brand");
+    if (brand && f.tagline != null) {
+      var p = $$("p", brand).filter(function(x){ return !x.classList.contains("foot-formerly"); })[0];
+      if (p) p.textContent = f.tagline;
+    }
+    if (f.formerly != null) { var fm = $(".foot-formerly"); if (fm) fm.textContent = f.formerly; }
+    var spans = $$(".foot-bottom span");
+    if (f.bottom_left != null && spans[0]) spans[0].innerHTML = richB(f.bottom_left);
+    if (f.bottom_right != null && spans[1]) spans[1].textContent = f.bottom_right;
+  }
+  function applyTrustMore(names){
+    if (!Array.isArray(names)) return;
+    var wrap = $(".trust-more");
+    if (!wrap) return;
+    wrap.innerHTML = names.map(function(n){
+      return '<span class="trust-tile in">' + esc(n) + "</span>";
+    }).join("");
+  }
+  function applyMarquee(rows){
+    if (!Array.isArray(rows) || !rows.length) return;
+    var vis = rows.filter(function(r){ return r.visible !== false; });
+    if (!vis.length) return;
+    var html = vis.map(function(r){
+      return '<span class="mq-logo"><img src="' + esc(r.image_url) + '" alt="' + esc(r.label ? r.label + " logo" : "") + '" loading="eager" decoding="async"></span>';
+    }).join("");
+    $$(".marquee-track .logo-set").forEach(function(set){ set.innerHTML = html; });
+  }
+  function applyIntroChips(rows){
+    if (!Array.isArray(rows) || !rows.length) return;
+    var chips = $$(".intro-chip");
+    if (!chips.length) return;
+    rows.forEach(function(r, i){
+      var chip = chips[i];
+      if (!chip) return;
+      if (r.visible === false) { chip.style.display = "none"; return; }
+      chip.style.display = "";
+      var img = $("img", chip);
+      if (img) {
+        if (r.image_url) img.src = r.image_url;
+        img.alt = r.label ? r.label + " logo" : "";
+      }
+    });
+  }
+  function applySocial(posts){
+    if (!Array.isArray(posts)) return;
+    var grid = $(".social-grid");
+    if (!grid) return;
+    var vis = posts.filter(function(p){ return p.visible !== false; });
+    grid.innerHTML = vis.map(function(p){
+      var href = p.post_url || p.image_url;
+      return '<article class="post-card reveal in">' +
+        '<a class="post-media" href="' + esc(href) + '" target="_blank" rel="noopener" aria-label="View ' + esc(p.brand + " " + p.title) + ' social post full size">' +
+          '<img loading="lazy" src="' + esc(p.image_url) + '" alt="' + esc(p.brand + " — " + p.title + " social post") + '">' +
+        "</a>" +
+        '<div class="post-body">' +
+          '<span class="post-brand in">' + esc(p.brand) + "</span>" +
+          '<h3 class="post-title in">' + esc(p.title) + "</h3>" +
+          '<span class="post-tag in">' + esc(p.tag || "Social Post") + "</span>" +
+          '<p class="post-detail in">' + esc(p.detail) + "</p>" +
+        "</div></article>";
+    }).join("");
+  }
+  function initialsOf(name){
+    var parts = String(name || "").trim().split(/\s+/).filter(Boolean);
+    if (!parts.length) return "?";
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return (parts[0].charAt(0) + parts[1].charAt(0)).toUpperCase();
+  }
+  function applyTeam(rows, bioMap){
+    if (!Array.isArray(rows) || !rows.length) return;
+    var grid = $(".team-grid");
+    if (!grid) return;
+    bioMap = bioMap || {};
+    var vis = rows.filter(function(r){ return r.visible !== false; });
+    grid.innerHTML = vis.map(function(m){
+      var bio = bioMap[m.id] || {};
+      var photo = m.photo_url
+        ? '<img class="team-photo" src="' + esc(m.photo_url) + '" alt="' + esc(m.name) + '">'
+        : '<span class="team-init" aria-hidden="true">' + esc(initialsOf(m.name)) + "</span>";
+      return '<article class="team-card reveal in">' +
+        '<div class="team-top">' + photo +
+          "<div>" +
+            '<h3 class="in">' + esc(m.name) + "</h3>" +
+            '<div class="team-role in">' + esc(m.role) + "</div>" +
+          "</div>" +
+        "</div>" +
+        (bio.bg ? '<p class="team-bg in">' + esc(bio.bg) + "</p>" : "") +
+        (bio.bio ? '<p class="team-bio in">' + esc(bio.bio) + "</p>" : "") +
+        "</article>";
+    }).join("");
+  }
+  function applyTeamExtra(x){
+    if (!x) return;
+    var subs = $$("#team .subhead");
+    if (x.leads_subhead != null && subs[0]) subs[0].innerHTML = richA(x.leads_subhead);
+    if (x.core_subhead != null && subs[1]) subs[1].innerHTML = richA(x.core_subhead);
+    if (x.talent_subhead != null && subs[2]) subs[2].innerHTML = richA(x.talent_subhead);
+    if (Array.isArray(x.core)) {
+      var grid = $(".core-grid");
+      if (grid) {
+        grid.innerHTML = x.core.map(function(c){
+          return '<div class="core-card reveal in"><b class="in">' + esc(c.name) + '</b><span class="in">' + esc(c.role) + "</span></div>";
+        }).join("");
+      }
+    }
+    if (Array.isArray(x.talent)) {
+      var row = $(".talent-row");
+      if (row) {
+        row.innerHTML = '<span class="talent-lbl in">' + esc(x.talent_label || "Internal Talent") + "</span>" +
+          x.talent.map(function(n){ return '<span class="talent-chip in">' + esc(n) + "</span>"; }).join("");
+      }
+    }
+    if (x.talent_note != null) { var note = $(".talent-note"); if (note) note.textContent = x.talent_note; }
+  }
+  function applyVideos(rows, meta){
+    if (!Array.isArray(rows) || !rows.length) return;
+    var motionGrid = $(".vid-grid:not(.vid-grid--reels)");
+    var reelsGrid = $(".vid-grid--reels");
+    if (!motionGrid && !reelsGrid) return;
+    meta = Array.isArray(meta) ? meta : [];
+    function card(row, i){
+      var m = meta[i] || {};
+      var aspect = m.aspect ? ' style="aspect-ratio:' + esc(m.aspect) + '"' : "";
+      return '<article class="vid-card reveal in">' +
+        '<div class="vid-media">' +
+          '<video controls playsinline preload="none"' + (row.poster_url ? ' poster="' + esc(row.poster_url) + '"' : "") + aspect + ' aria-label="' + esc(row.title) + '">' +
+            '<source src="' + esc(row.video_url) + '" type="video/mp4">' +
+          "</video>" +
+          (m.dur ? '<span class="vid-dur">' + esc(m.dur) + "</span>" : "") +
+        "</div>" +
+        '<div class="vid-body">' +
+          (m.brand ? '<span class="vid-brand in">' + esc(m.brand) + "</span>" : "") +
+          '<h3 class="vid-title in">' + esc(row.title) + "</h3>" +
+          (m.detail ? '<p class="vid-detail in">' + esc(m.detail) + "</p>" : "") +
+        "</div></article>";
+    }
+    var motion = [], reels = [];
+    rows.forEach(function(row, i){
+      if (row.visible === false) return;
+      var m = meta[i] || {};
+      (m.group === "reels" ? reels : motion).push(card(row, i));
+    });
+    if (motionGrid) motionGrid.innerHTML = motion.join("");
+    if (reelsGrid) reelsGrid.innerHTML = reels.join("");
+    var notes = $$("#videos .subhead-note");
+    if (notes[0]) notes[0].textContent = notes[0].textContent.replace(/\d+\s*videos?\s*$/, motion.length + " videos");
+    if (notes[1]) notes[1].textContent = notes[1].textContent.replace(/\d+\s*videos?\s*$/, reels.length + " videos");
+  }
+  function applyAll(){
+    var c = DB.content;
+    if (c.hero) applyHero(c.hero);
+    if (c.sections) applySections(c.sections);
+    if (c.about_extra) applyAboutExtra(c.about_extra);
+    if (c.services) applyServices(c.services);
+    if (c.also_chips) applyAlsoChips(c.also_chips);
+    if (c.industries) applyIndustries(c.industries);
+    if (c.counters) applyCounters(c.counters);
+    if (c.contact) applyContact(c.contact);
+    if (c.footer) applyFooter(c.footer);
+    if (c.trust_more) applyTrustMore(c.trust_more);
+    if (c.social_posts) applySocial(c.social_posts);
+    if (DB.media.marquee && DB.media.marquee.length) applyMarquee(DB.media.marquee);
+    if (DB.media.intro && DB.media.intro.length) {
+      applyIntroChips(DB.media.intro);
+      /* Intro chips are built ~1–2.5s after load; re-apply once they exist. */
+      setTimeout(function(){ applyIntroChips(DB.media.intro); }, 1800);
+      setTimeout(function(){ applyIntroChips(DB.media.intro); }, 3400);
+    }
+    if (DB.team && DB.team.length) applyTeam(DB.team, c.team_bio || {});
+    if (c.team_extra) applyTeamExtra(c.team_extra);
+    if (DB.videos && DB.videos.length) applyVideos(DB.videos, c.video_meta || []);
+  }
+
+  /* ---------- backend load / save ---------- */
+  function loadAll(){
+    if (!sb) return;
+    Promise.all([
+      sb.from("site_content").select("key,value"),
+      sb.from("media_items").select("*").order("sort_order", { ascending: true }),
+      sb.from("team_members").select("*").order("sort_order", { ascending: true }),
+      sb.from("videos").select("*").order("sort_order", { ascending: true })
+    ]).then(function(res){
+      var c = res[0], m = res[1], t = res[2], v = res[3];
+      if (c.data) c.data.forEach(function(r){ DB.content[r.key] = r.value; });
+      if (m.data) {
+        DB.media.marquee = m.data.filter(function(r){ return r.slot === "marquee"; });
+        DB.media.intro = m.data.filter(function(r){ return r.slot === "intro"; });
+      }
+      if (t.data) DB.team = t.data;
+      if (v.data) DB.videos = v.data;
+      DB.loaded = true;
+      applyAll();
+    }).catch(function(){ /* unreachable: hardcoded content stays */ });
+  }
+  function saveContent(key, value){
+    if (!sb) return Promise.reject(new Error("offline"));
+    return sb.from("site_content")
+      .upsert({ key: key, value: value, updated_at: new Date().toISOString() }, { onConflict: "key" })
+      .then(function(r){
+        if (r.error) throw r.error;
+        DB.content[key] = value;
+      });
+  }
+  function syncTable(table, rows, slot){
+    if (!sb) return Promise.reject(new Error("offline"));
+    var q = sb.from(table).select("id");
+    if (slot) q = q.eq("slot", slot);
+    return q.then(function(res){
+      if (res.error) throw res.error;
+      var keep = rows.map(function(r){ return r.id; });
+      var toDelete = (res.data || []).map(function(r){ return r.id; })
+        .filter(function(id){ return keep.indexOf(id) < 0; });
+      var chain = Promise.resolve();
+      if (toDelete.length) {
+        chain = chain.then(function(){
+          return sb.from(table).delete().in("id", toDelete).then(function(r){
+            if (r.error) throw r.error;
+          });
+        });
+      }
+      if (rows.length) {
+        chain = chain.then(function(){
+          return sb.from(table).upsert(rows).then(function(r){
+            if (r.error) throw r.error;
+          });
+        });
+      }
+      return chain;
+    });
+  }
+  /* ---------- panel: shared building blocks ---------- */
+  function clone(o){ return JSON.parse(JSON.stringify(o == null ? null : o)); }
+  var toastTimer = null;
+  function toast(msg){
+    var t = $("#oaToast");
+    if (!t) return;
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ t.classList.remove("show"); }, 2600);
+  }
+  function fld(label, k, val, type, ph){
+    if (type === "textarea") {
+      return '<div class="oa-field"><label>' + esc(label) + '</label><textarea data-k="' + k + '" rows="3" placeholder="' + esc(ph || "") + '">' + esc(val == null ? "" : val) + "</textarea></div>";
+    }
+    return '<div class="oa-field"><label>' + esc(label) + '</label><input data-k="' + k + '" value="' + esc(val == null ? "" : val) + '" placeholder="' + esc(ph || "") + '"></div>';
+  }
+  function readFields(scope){
+    var out = {};
+    $$("[data-k]", scope).forEach(function(el){ out[el.getAttribute("data-k")] = el.value; });
+    return out;
+  }
+  function groupHtml(id, title, note, inner){
+    return '<div class="oa-group" id="' + id + '"><h4>' + title + "</h4>" +
+      (note ? '<p class="oa-gnote">' + note + "</p>" : "") + inner +
+      '<div class="oa-save-row"><button type="button" class="btn btn-prime oa-save-btn">Save changes</button>' +
+      '<span class="oa-saved-msg">Saved — live on the page now</span></div></div>';
+  }
+  function onSave(groupEl, fn){
+    if (!groupEl) return;
+    var btn = $(".oa-save-btn", groupEl);
+    var msg = $(".oa-saved-msg", groupEl);
+    btn.addEventListener("click", function(){
+      btn.disabled = true;
+      var old = btn.textContent;
+      btn.textContent = "Saving…";
+      fn().then(function(){
+        if (msg) msg.classList.add("show");
+        toast("Saved — live on the page now");
+        setTimeout(function(){ if (msg) msg.classList.remove("show"); }, 2800);
+      }).catch(function(){
+        toast("Save failed — check the connection and try again");
+      }).then(function(){
+        btn.disabled = false;
+        btn.textContent = old;
+      });
+    });
+  }
+  /* Generic list editor: reorder (up/down), show/hide, delete, add.
+     Mutates the items array in place as the admin types. */
+  function makeList(container, items, def){
+    function render(){
+      var html = items.map(function(it, i){
+        var title = def.titleKey ? (it[def.titleKey] || "Untitled") : ("Item " + (i + 1));
+        var thumb = def.thumb ? '<img class="oa-thumb' + (def.thumbPhoto ? " oa-thumb-photo" : "") + '" src="' + esc(it[def.thumb] || "") + '" alt="">' : "";
+        var vis = def.visible === false ? "" :
+          '<label class="oa-switch" title="Show or hide on the page"><input type="checkbox" data-k="visible"' + (it.visible !== false ? " checked" : "") + '><span class="track"></span><span class="sw-lbl">Shown</span></label>';
+        var fields = def.fields.map(function(f){
+          var val = it[f.k] == null ? "" : it[f.k];
+          var wide = (f.type === "textarea" || f.type === "image") ? ' style="grid-column:1/-1"' : "";
+          var inner = "";
+          if (f.type === "textarea") {
+            inner = '<textarea data-k="' + f.k + '" rows="3" placeholder="' + esc(f.ph || "") + '">' + esc(val) + "</textarea>";
+          } else if (f.type === "image") {
+            inner = '<div class="oa-imgrow"><input data-k="' + f.k + '" value="' + esc(val) + '" placeholder="Paste an image URL, or upload">' +
+              '<button type="button" class="oa-upbtn" data-act="upload" data-k="' + f.k + '">Upload</button></div>';
+          } else if (f.type === "select") {
+            inner = '<select data-k="' + f.k + '">' + f.options.map(function(o){
+              return '<option value="' + esc(o.v) + '"' + (String(val) === String(o.v) ? " selected" : "") + ">" + esc(o.t) + "</option>";
+            }).join("") + "</select>";
+          } else {
+            inner = '<input data-k="' + f.k + '" value="' + esc(val) + '" placeholder="' + esc(f.ph || "") + '"' + (f.type === "number" ? ' type="number" step="any"' : "") + ">";
+          }
+          return '<div class="oa-field"' + wide + "><label>" + esc(f.label) + "</label>" + inner + "</div>";
+        }).join("");
+        return '<div class="oa-item" data-idx="' + i + '">' +
+          '<div class="oa-item-head">' + thumb +
+            '<span class="oa-item-title">' + esc(title) + "</span>" + vis +
+            '<button type="button" class="oa-iconbtn" data-act="up" aria-label="Move up">↑</button>' +
+            '<button type="button" class="oa-iconbtn" data-act="down" aria-label="Move down">↓</button>' +
+            '<button type="button" class="oa-iconbtn danger" data-act="del" aria-label="Remove">×</button>' +
+          "</div>" +
+          '<div class="oa-grid2">' + fields + "</div>" +
+        "</div>";
+      }).join("");
+      container.innerHTML = html + '<button type="button" class="oa-addbtn" data-act="add">+ ' + esc(def.addLabel || "Add item") + "</button>";
+    }
+    container.addEventListener("input", function(e){
+      var t = e.target;
+      var k = t.getAttribute && t.getAttribute("data-k");
+      if (!k) return;
+      var itemEl = t.closest ? t.closest(".oa-item") : null;
+      if (!itemEl) return;
+      var idx = parseInt(itemEl.getAttribute("data-idx"), 10);
+      items[idx][k] = t.type === "checkbox" ? t.checked : t.value;
+      if (def.thumb && k === def.thumb) { var img = $(".oa-thumb", itemEl); if (img) img.src = t.value; }
+      if (def.titleKey && k === def.titleKey) { var tt = $(".oa-item-title", itemEl); if (tt) tt.textContent = t.value || "Untitled"; }
+    });
+    container.addEventListener("click", function(e){
+      var btn = e.target.closest ? e.target.closest("[data-act]") : null;
+      if (!btn) return;
+      var act = btn.getAttribute("data-act");
+      if (act === "add") { items.push(def.newItem()); render(); return; }
+      var itemEl = btn.closest(".oa-item");
+      if (!itemEl) return;
+      var idx = parseInt(itemEl.getAttribute("data-idx"), 10);
+      if (act === "up" && idx > 0) { var a = items[idx - 1]; items[idx - 1] = items[idx]; items[idx] = a; render(); }
+      else if (act === "down" && idx < items.length - 1) { var b = items[idx + 1]; items[idx + 1] = items[idx]; items[idx] = b; render(); }
+      else if (act === "del") { items.splice(idx, 1); render(); }
+      else if (act === "upload") {
+        var input = itemEl.querySelector('input[data-k="' + btn.getAttribute("data-k") + '"]');
+        if (input) startUpload(input);
+      }
+    });
+    render();
+  }
+
+  /* ---------- image upload to the one-a-media bucket ---------- */
+  var pendingInput = null;
+  function startUpload(input){
+    pendingInput = input;
+    var f = $("#oaFile");
+    f.value = "";
+    f.click();
+  }
+  $("#oaFile").addEventListener("change", function(){
+    var file = this.files && this.files[0];
+    var input = pendingInput;
+    pendingInput = null;
+    if (!file || !input) return;
+    if (!sb) { toast("Upload unavailable — paste an image URL instead"); return; }
+    toast("Uploading image…");
+    var path = "uploads/" + Date.now() + "-" + file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+    sb.storage.from("one-a-media").upload(path, file, { upsert: true }).then(function(res){
+      if (res.error) throw res.error;
+      var pub = sb.storage.from("one-a-media").getPublicUrl(path);
+      input.value = pub.data.publicUrl;
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+      toast("Image uploaded — remember to save");
+    }).catch(function(){
+      toast("Upload failed — paste an image URL instead");
+    });
+  });
+
+  /* ---------- pane builders ---------- */
+  function buildContentPane(){
+    var pane = $('[data-pane="content"]');
+    var hero = clone(contentOr("hero", scrapeHero));
+    hero.lines = hero.lines || [];
+    while (hero.lines.length < 4) hero.lines.push("");
+    var sections = clone(contentOr("sections", scrapeSections));
+    var about = clone(contentOr("about_extra", scrapeAboutExtra));
+    var services = clone(contentOr("services", scrapeServices));
+    services.forEach(function(it){
+      it.bodyText = it.kind === "list" ? (it.items || []).join("\n") : (it.text || "");
+    });
+    var alsoChips = clone(contentOr("also_chips", function(){
+      return $$(".also-row .chip").map(function(c){ return txt(c); });
+    }));
+    var industries = clone(contentOr("industries", function(){
+      return $$(".ind-grid .ind-chip").map(function(c){ return txt(c); });
+    }));
+    var counters = clone(contentOr("counters", scrapeCounters));
+    var contact = clone(contentOr("contact", scrapeContact));
+    var footer = clone(contentOr("footer", scrapeFooter));
+
+    var html = "";
+    html += groupHtml("oaG-hero", "Hero", "Wrap a word in [brackets] to make it orange, e.g. [Grow].",
+      [0, 1, 2, 3].map(function(i){ return fld("Headline line " + (i + 1), "line" + i, hero.lines[i]); }).join("") +
+      fld("Slogan chip", "slogan", hero.slogan) +
+      fld("Hero paragraph", "sub", hero.sub, "textarea") +
+      fld("Proof line — wrap the brand names in [brackets]", "proof", hero.proof));
+    var secInner = SECTION_DEFS.map(function(def){
+      var v = sections[def.key] || { eyebrow: "", title: "", lede: "" };
+      return '<div class="oa-subgroup" data-sec="' + def.key + '"><h5>' + esc(def.name) + "</h5>" +
+        fld("Eyebrow (small line above)", "eyebrow", v.eyebrow) +
+        fld("Heading — [brackets] = orange", "title", v.title) +
+        (def.lede ? fld("Intro line", "lede", v.lede || "", "textarea") : "") +
+        "</div>";
+    }).join("");
+    html += groupHtml("oaG-sections", "Section headings & intro lines", "", secInner);
+    html += groupHtml("oaG-about", "About — Our Story paragraphs", "",
+      fld("Positioning paragraph", "pos", about.pos, "textarea") +
+      '<div class="oa-grid2">' + fld("Mission heading", "mission_title", about.mission_title) + fld("Vision heading", "vision_title", about.vision_title) + "</div>" +
+      fld("Mission text", "mission", about.mission, "textarea") +
+      fld("Vision text", "vision", about.vision, "textarea") +
+      fld("Closing line — [brackets] = orange", "close", about.close) +
+      '<div class="oa-grid2">' + fld("“What makes us different” heading", "diff_subhead", about.diff_subhead) + fld("“Our core values” heading", "values_subhead", about.values_subhead) + "</div>");
+    html += groupHtml("oaG-services", "Service cards", "For a list card, write one item per line. “Also in the mix” chips: one per line.",
+      '<div id="oaSvcList"></div>' +
+      '<div class="oa-field" style="margin-top:14px"><label>Also in the mix — one chip per line</label><textarea id="oaAlsoText" rows="4">' + esc(alsoChips.join("\n")) + "</textarea></div>");
+    html += groupHtml("oaG-industries", "Industries we serve", "One industry per line.",
+      '<div class="oa-field"><label>Industries</label><textarea id="oaIndText" rows="5">' + esc(industries.join("\n")) + "</textarea></div>");
+    var cntInner = counters.map(function(c, i){
+      return '<div class="oa-subgroup" data-ci="' + i + '"><h5>Counter ' + (i + 1) + "</h5>" +
+        '<div class="oa-grid2">' +
+        fld("Number", "target", c.target) + fld("Decimals", "decimals", c.decimals) +
+        fld("Suffix (e.g. K, +, or blank)", "suffix", c.suffix) + "</div>" +
+        fld("Label — [brackets] = bold, new line = line break", "label", c.label, "textarea") +
+        "</div>";
+    }).join("");
+    html += groupHtml("oaG-counters", "Counter numbers", "", cntInner);
+    html += groupHtml("oaG-contact", "Contact info & footer", "",
+      '<div class="oa-grid2">' + fld("Phone (shown)", "phone_display", contact.phone_display) + fld("Phone (tap-to-call number)", "phone_tel", contact.phone_tel) + "</div>" +
+      fld("Studio address", "address", contact.address, "textarea") +
+      fld("“Working on” line", "working", contact.working) +
+      fld("Footer line", "f_tagline", footer.tagline, "textarea") +
+      fld("Footer small line", "f_formerly", footer.formerly) +
+      '<div class="oa-grid2">' + fld("Bottom left — [brackets] = bold", "f_bottom_left", footer.bottom_left) + fld("Bottom right", "f_bottom_right", footer.bottom_right) + "</div>");
+    pane.innerHTML = html;
+
+    onSave($("#oaG-hero"), function(){
+      var v = readFields($("#oaG-hero"));
+      var data = { lines: [v.line0, v.line1, v.line2, v.line3], slogan: v.slogan, sub: v.sub, proof: v.proof };
+      return saveContent("hero", data).then(function(){ applyHero(data); });
+    });
+    onSave($("#oaG-sections"), function(){
+      var out = {};
+      $$("#oaG-sections .oa-subgroup").forEach(function(sub){
+        var v = readFields(sub);
+        var item = { eyebrow: v.eyebrow, title: v.title };
+        if (v.lede !== undefined) item.lede = v.lede;
+        out[sub.getAttribute("data-sec")] = item;
+      });
+      return saveContent("sections", out).then(function(){ applySections(out); });
+    });
+    onSave($("#oaG-about"), function(){
+      var v = readFields($("#oaG-about"));
+      return saveContent("about_extra", v).then(function(){ applyAboutExtra(v); });
+    });
+    makeList($("#oaSvcList"), services, {
+      titleKey: "title",
+      addLabel: "Add service card",
+      newItem: function(){ return { title: "", kind: "text", items: [], text: "", bodyText: "", note: "", icon: 6, wide: false, go_text: "Start a project", go_href: "#contact" }; },
+      fields: [
+        { k: "title", label: "Card title", type: "text" },
+        { k: "kind", label: "Body type", type: "select", options: [{ v: "list", t: "Bullet list" }, { v: "text", t: "Paragraph" }] },
+        { k: "bodyText", label: "Body — one list item per line, or a paragraph", type: "textarea" },
+        { k: "note", label: "Small note under the body (optional)", type: "text" }
+      ]
+    });
+    onSave($("#oaG-services"), function(){
+      var clean = services.map(function(it){
+        var c = { title: it.title, kind: it.kind, items: [], text: "", note: it.note || "", icon: parseInt(it.icon, 10) || 0, wide: !!it.wide, go_text: it.go_text || "Start a project", go_href: it.go_href || "#contact" };
+        if (it.kind === "list") c.items = String(it.bodyText || "").split("\n").map(function(s){ return s.trim(); }).filter(Boolean);
+        else c.text = it.bodyText || "";
+        return c;
+      });
+      var chips = $("#oaAlsoText").value.split("\n").map(function(s){ return s.trim(); }).filter(Boolean);
+      return saveContent("services", clean)
+        .then(function(){ return saveContent("also_chips", chips); })
+        .then(function(){ applyServices(clean); applyAlsoChips(chips); });
+    });
+    onSave($("#oaG-industries"), function(){
+      var list = $("#oaIndText").value.split("\n").map(function(s){ return s.trim(); }).filter(Boolean);
+      return saveContent("industries", list).then(function(){ applyIndustries(list); });
+    });
+    onSave($("#oaG-counters"), function(){
+      var out = [];
+      $$("#oaG-counters .oa-subgroup").forEach(function(sub){
+        var v = readFields(sub);
+        out.push({ target: v.target, decimals: v.decimals || "0", suffix: v.suffix, label: v.label });
+      });
+      return saveContent("counters", out).then(function(){ applyCounters(out); });
+    });
+    onSave($("#oaG-contact"), function(){
+      var v = readFields($("#oaG-contact"));
+      var ct = { phone_display: v.phone_display, phone_tel: v.phone_tel, address: v.address, working: v.working };
+      var ft = { tagline: v.f_tagline, formerly: v.f_formerly, bottom_left: v.f_bottom_left, bottom_right: v.f_bottom_right };
+      return saveContent("contact", ct)
+        .then(function(){ return saveContent("footer", ft); })
+        .then(function(){ applyContact(ct); applyFooter(ft); });
+    });
+  }
+
+  function buildMediaPane(){
+    var pane = $('[data-pane="media"]');
+    var marqueeItems = clone(DB.media.marquee && DB.media.marquee.length ? DB.media.marquee : scrapeLogoList());
+    var introItems = clone(DB.media.intro && DB.media.intro.length ? DB.media.intro : scrapeLogoList());
+    var trust = clone(contentOr("trust_more", scrapeTrustMore));
+    var posts = clone(contentOr("social_posts", scrapeSocial));
+    var logoFields = [
+      { k: "label", label: "Brand name", type: "text" },
+      { k: "image_url", label: "Logo image", type: "image" }
+    ];
+    pane.innerHTML =
+      groupHtml("oaG-marquee", "Main logos — trust marquee (12)", "These scroll in the “Brands that trust ONE.A” bar. Reorder with ↑ ↓, hide with the switch.", '<div id="oaMarqueeList"></div>') +
+      groupHtml("oaG-intro", "Intro box logos (12)", "The logos that burst out of the ONE.A box when the site first opens.", '<div id="oaIntroList"></div>') +
+      groupHtml("oaG-trust", "More brands — name list", "Text-only brand names under the marquee. One name per line.", '<div class="oa-field"><label>Brand names</label><textarea id="oaTrustText" rows="8">' + esc(trust.join("\n")) + "</textarea></div>") +
+      groupHtml("oaG-social", "Social post cards (13)", "One post per brand in the Social Posts section. The post link opens when a visitor taps the image.", '<div id="oaSocialList"></div>');
+
+    makeList($("#oaMarqueeList"), marqueeItems, {
+      thumb: "image_url", titleKey: "label", addLabel: "Add logo",
+      newItem: function(){ return { id: uid(), label: "", image_url: "", visible: true }; },
+      fields: logoFields
+    });
+    makeList($("#oaIntroList"), introItems, {
+      thumb: "image_url", titleKey: "label", addLabel: "Add logo",
+      newItem: function(){ return { id: uid(), label: "", image_url: "", visible: true }; },
+      fields: logoFields
+    });
+    makeList($("#oaSocialList"), posts, {
+      thumb: "image_url", titleKey: "brand", addLabel: "Add social post",
+      newItem: function(){ return { brand: "", title: "", tag: "Social Post", detail: "", image_url: "", post_url: "", visible: true }; },
+      fields: [
+        { k: "brand", label: "Brand", type: "text" },
+        { k: "title", label: "Post title", type: "text" },
+        { k: "image_url", label: "Post image", type: "image" },
+        { k: "post_url", label: "Post link (opened on tap)", type: "text", ph: "https://…" },
+        { k: "tag", label: "Tag", type: "text" },
+        { k: "detail", label: "Detail line", type: "textarea" }
+      ]
+    });
+    function mediaRows(items, slot){
+      return items.map(function(it, i){
+        return { id: it.id || uid(), slot: slot, label: it.label || "", image_url: it.image_url || "", sort_order: i, visible: it.visible !== false };
+      });
+    }
+    onSave($("#oaG-marquee"), function(){
+      var rows = mediaRows(marqueeItems, "marquee");
+      return syncTable("media_items", rows, "marquee").then(function(){
+        DB.media.marquee = rows;
+        applyMarquee(rows);
+      });
+    });
+    onSave($("#oaG-intro"), function(){
+      var rows = mediaRows(introItems, "intro");
+      return syncTable("media_items", rows, "intro").then(function(){
+        DB.media.intro = rows;
+        applyIntroChips(rows);
+      });
+    });
+    onSave($("#oaG-trust"), function(){
+      var names = $("#oaTrustText").value.split("\n").map(function(s){ return s.trim(); }).filter(Boolean);
+      return saveContent("trust_more", names).then(function(){ applyTrustMore(names); });
+    });
+    onSave($("#oaG-social"), function(){
+      return saveContent("social_posts", posts).then(function(){ applySocial(posts); });
+    });
+  }
+
+  function buildTeamPane(){
+    var pane = $('[data-pane="team"]');
+    var scraped = scrapeTeam();
+    var srcRows = DB.team && DB.team.length ? DB.team : scraped.rows;
+    var bioMap = DB.content.team_bio || scraped.bio;
+    var items = clone(srcRows).map(function(r){
+      var bio = bioMap[r.id] || {};
+      return { id: r.id, name: r.name || "", role: r.role || "", photo_url: r.photo_url || "", visible: r.visible !== false, bg: bio.bg || "", bio: bio.bio || "" };
+    });
+    var extra = clone(contentOr("team_extra", scrapeTeamExtra));
+    pane.innerHTML =
+      groupHtml("oaG-team", "Team leads", "Shown as the large cards in Our Folks. Add a photo, or leave it blank to use initials.", '<div id="oaTeamList"></div>') +
+      groupHtml("oaG-teamx", "Core team & internal talent", "",
+        '<div class="oa-grid2">' +
+          fld("“Team leads” heading — [brackets] = orange", "leads_subhead", extra.leads_subhead) +
+          fld("“Core team” heading — [brackets] = orange", "core_subhead", extra.core_subhead) +
+        "</div>" +
+        '<div id="oaCoreList"></div>' +
+        fld("“Internal Talent” heading — [brackets] = orange", "talent_subhead", extra.talent_subhead) +
+        '<div class="oa-grid2">' +
+          fld("Talent row label", "talent_label", extra.talent_label) +
+          fld("Talent note", "talent_note", extra.talent_note) +
+        "</div>" +
+        '<div class="oa-field"><label>Talent names — one per line</label><textarea id="oaTalentText" rows="3">' + esc((extra.talent || []).join("\n")) + "</textarea></div>");
+    makeList($("#oaTeamList"), items, {
+      thumb: "photo_url", thumbPhoto: true, titleKey: "name", addLabel: "Add team member",
+      newItem: function(){ return { id: uid(), name: "", role: "", photo_url: "", bg: "", bio: "", visible: true }; },
+      fields: [
+        { k: "name", label: "Name", type: "text" },
+        { k: "role", label: "Role", type: "text" },
+        { k: "photo_url", label: "Photo", type: "image" },
+        { k: "bg", label: "Background line", type: "text" },
+        { k: "bio", label: "Bio", type: "textarea" }
+      ]
+    });
+    makeList($("#oaCoreList"), extra.core, {
+      titleKey: "name", visible: false, addLabel: "Add core member",
+      newItem: function(){ return { name: "", role: "" }; },
+      fields: [
+        { k: "name", label: "Name", type: "text" },
+        { k: "role", label: "Role", type: "text" }
+      ]
+    });
+    onSave($("#oaG-team"), function(){
+      var rows = items.map(function(it, i){
+        return { id: it.id || uid(), name: it.name, role: it.role, photo_url: it.photo_url, sort_order: i, visible: it.visible !== false };
+      });
+      var bioObj = {};
+      items.forEach(function(it){
+        if (it.bg || it.bio) bioObj[it.id] = { bg: it.bg || "", bio: it.bio || "" };
+      });
+      return syncTable("team_members", rows)
+        .then(function(){ return saveContent("team_bio", bioObj); })
+        .then(function(){ DB.team = rows; applyTeam(rows, bioObj); });
+    });
+    onSave($("#oaG-teamx"), function(){
+      var v = readFields($("#oaG-teamx"));
+      var out = {
+        leads_subhead: v.leads_subhead, core_subhead: v.core_subhead, talent_subhead: v.talent_subhead,
+        core: extra.core,
+        talent_label: v.talent_label,
+        talent: $("#oaTalentText").value.split("\n").map(function(s){ return s.trim(); }).filter(Boolean),
+        talent_note: v.talent_note
+      };
+      return saveContent("team_extra", out).then(function(){ applyTeamExtra(out); });
+    });
+  }
+
+  function buildVideosPane(){
+    var pane = $('[data-pane="videos"]');
+    var items;
+    if (DB.videos && DB.videos.length) {
+      var meta = DB.content.video_meta || [];
+      items = clone(DB.videos).map(function(v, i){
+        var m = meta[i] || {};
+        return { id: v.id, title: v.title || "", video_url: v.video_url || "", poster_url: v.poster_url || "", visible: v.visible !== false,
+          brand: m.brand || "", detail: m.detail || "", dur: m.dur || "", aspect: m.aspect || "", group: m.group || "motion" };
+      });
+    } else {
+      items = clone(scrapeVideos());
+    }
+    pane.innerHTML = groupHtml("oaG-videos", "Videos — The Studio", "Video URL can be an uploaded file link or any direct .mp4 link. Poster is the still image shown before play.",
+      '<div id="oaVideoList"></div>');
+    makeList($("#oaVideoList"), items, {
+      thumb: "poster_url", thumbPhoto: true, titleKey: "title", addLabel: "Add video",
+      newItem: function(){ return { id: uid(), title: "", video_url: "", poster_url: "", brand: "", detail: "", dur: "", aspect: "4/5", group: "motion", visible: true }; },
+      fields: [
+        { k: "title", label: "Title", type: "text" },
+        { k: "brand", label: "Brand", type: "text" },
+        { k: "video_url", label: "Video URL (.mp4)", type: "text", ph: "media/… or https://…" },
+        { k: "poster_url", label: "Poster image", type: "image" },
+        { k: "group", label: "Section", type: "select", options: [{ v: "motion", t: "Motion Graphics" }, { v: "reels", t: "Reels & TikTok" }] },
+        { k: "aspect", label: "Shape", type: "select", options: [{ v: "", t: "Auto" }, { v: "4/5", t: "4:5 portrait" }, { v: "9/16", t: "9:16 reel" }, { v: "16/9", t: "16:9 wide" }, { v: "1/1", t: "1:1 square" }] },
+        { k: "dur", label: "Duration label (e.g. 12s)", type: "text" },
+        { k: "detail", label: "Detail line", type: "textarea" }
+      ]
+    });
+    onSave($("#oaG-videos"), function(){
+      var rows = items.map(function(it, i){
+        return { id: it.id || uid(), title: it.title, video_url: it.video_url, poster_url: it.poster_url, sort_order: i, visible: it.visible !== false };
+      });
+      var meta = items.map(function(it){
+        return { brand: it.brand || "", detail: it.detail || "", dur: it.dur || "", aspect: it.aspect || "", group: it.group || "motion" };
+      });
+      return syncTable("videos", rows)
+        .then(function(){ return saveContent("video_meta", meta); })
+        .then(function(){ DB.videos = rows; applyVideos(rows, meta); });
+    });
+  }
+
+  function buildSettingsPane(){
+    var pane = $('[data-pane="settings"]');
+    pane.innerHTML =
+      '<div class="oa-group"><h4>Change PIN</h4>' +
+      '<p class="oa-gnote">Enter the current PIN, then choose a new 4–8 digit PIN.</p>' +
+      '<div class="oa-field"><label>Current PIN</label><input id="oaPinCur" type="password" inputmode="numeric" autocomplete="off" maxlength="8"></div>' +
+      '<div class="oa-grid2">' +
+        '<div class="oa-field"><label>New PIN</label><input id="oaPinNew" type="password" inputmode="numeric" autocomplete="off" maxlength="8"></div>' +
+        '<div class="oa-field"><label>Confirm new PIN</label><input id="oaPinNew2" type="password" inputmode="numeric" autocomplete="off" maxlength="8"></div>' +
+      "</div>" +
+      '<div class="oa-save-row"><button type="button" class="btn btn-prime" id="oaPinBtn">Update PIN</button>' +
+      '<span class="oa-saved-msg" id="oaPinMsg">PIN updated</span></div></div>' +
+      '<div class="oa-group"><h4>About saving</h4>' +
+      '<p class="oa-gnote">Every Save writes to the ONE.A site database and updates this page straight away — visitors see the new content on their next visit, with no republishing step.</p>' +
+      '<div class="oa-save-row"><button type="button" class="btn btn-ghost" id="oaSettingsClose">Close panel</button></div></div>';
+    $("#oaPinBtn").addEventListener("click", function(){
+      var cur = $("#oaPinCur").value, nw = $("#oaPinNew").value, nw2 = $("#oaPinNew2").value;
+      var msg = $("#oaPinMsg");
+      function fail(text){ toast(text); }
+      if (!/^\d{4,8}$/.test(nw)) { fail("New PIN must be 4–8 digits"); return; }
+      if (nw !== nw2) { fail("New PINs do not match"); return; }
+      sha256(cur).then(function(h){
+        if (h !== storedHash) { fail("Current PIN is incorrect"); return; }
+        return sha256(nw).then(function(nh){
+          return sb.from("admin_auth").update({ pin_hash: nh }).eq("id", 1).then(function(r){
+            if (r.error) throw r.error;
+            storedHash = nh;
+            $("#oaPinCur").value = ""; $("#oaPinNew").value = ""; $("#oaPinNew2").value = "";
+            msg.classList.add("show");
+            toast("PIN updated");
+            setTimeout(function(){ msg.classList.remove("show"); }, 2800);
+          });
+        });
+      }).catch(function(){ toast("Could not update the PIN — try again"); });
+    });
+    $("#oaSettingsClose").addEventListener("click", closePanel);
+  }
+
+  function buildPanel(){
+    buildContentPane();
+    buildMediaPane();
+    buildTeamPane();
+    buildVideosPane();
+    buildSettingsPane();
+  }
+
+  /* ---------- PIN gate ---------- */
+  var loginEl = $("#oaLogin"), panelEl = $("#oaPanel");
+  var loginSub = $("#oaLoginSub"), loginBody = $("#oaLoginBody"), loginErr = $("#oaLoginErr");
+  var storedHash = null;
+  function sha256(str){
+    if (window.crypto && crypto.subtle && window.TextEncoder) {
+      return crypto.subtle.digest("SHA-256", new TextEncoder().encode(str)).then(function(buf){
+        return Array.prototype.map.call(new Uint8Array(buf), function(b){
+          return ("0" + b.toString(16)).slice(-2);
+        }).join("");
+      });
+    }
+    var h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+    for (var i = 0; i < str.length; i++) {
+      var ch = str.charCodeAt(i);
+      h1 = Math.imul(h1 ^ ch, 2654435761);
+      h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+    return Promise.resolve((h2 >>> 0).toString(16) + (h1 >>> 0).toString(16));
+  }
+  function showLoginErr(msg){
+    loginErr.textContent = msg;
+    loginErr.classList.remove("show");
+    void loginErr.offsetWidth;
+    loginErr.classList.add("show");
+  }
+  function pinForm(fieldsHtml, btnText){
+    return '<form id="oaPinForm" autocomplete="off">' + fieldsHtml +
+      '<button class="btn btn-prime" type="submit">' + btnText + "</button></form>";
+  }
+  function pinInput(id, label){
+    return '<input class="oa-pin" id="' + id + '" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="8" aria-label="' + label + '" placeholder="PIN">';
+  }
+  function renderSetupForm(){
+    loginSub.textContent = "First visit — set a PIN to protect site editing.";
+    loginBody.innerHTML = pinForm(pinInput("oaPinA", "New PIN") + pinInput("oaPinB", "Confirm PIN"), "Set PIN & Continue");
+    $("#oaPinForm").addEventListener("submit", function(e){
+      e.preventDefault();
+      var a = $("#oaPinA").value, b = $("#oaPinB").value;
+      if (!/^\d{4,8}$/.test(a)) { showLoginErr("PIN must be 4–8 digits."); return; }
+      if (a !== b) { showLoginErr("The two PINs do not match."); return; }
+      sha256(a).then(function(h){
+        return sb.from("admin_auth").insert({ id: 1, pin_hash: h }).then(function(r){
+          if (r.error) throw r.error;
+          storedHash = h;
+          enterPanel();
+        });
+      }).catch(function(){ showLoginErr("Could not save the PIN. Please try again."); });
+    });
+    var first = $("#oaPinA");
+    if (first) first.focus();
+  }
+  function renderLoginForm(){
+    loginSub.textContent = "Enter your PIN to open site control.";
+    loginBody.innerHTML = pinForm(pinInput("oaPinA", "PIN"), "Unlock");
+    $("#oaPinForm").addEventListener("submit", function(e){
+      e.preventDefault();
+      var a = $("#oaPinA").value;
+      sha256(a).then(function(h){
+        if (h === storedHash) enterPanel();
+        else {
+          $("#oaPinA").value = "";
+          showLoginErr("Incorrect PIN — please try again.");
+        }
+      });
+    });
+    var first = $("#oaPinA");
+    if (first) first.focus();
+  }
+  function openLogin(){
+    loginEl.classList.add("open");
+    loginEl.setAttribute("aria-hidden", "false");
+    document.body.classList.add("oa-lock");
+    loginErr.classList.remove("show");
+    loginBody.innerHTML = "";
+    if (!sb) {
+      loginSub.textContent = "Site control is unavailable right now.";
+      showLoginErr("Could not reach the site database. Close this and try again later.");
+      return;
+    }
+    loginSub.textContent = "Checking…";
+    sb.from("admin_auth").select("pin_hash").eq("id", 1).maybeSingle().then(function(res){
+      if (res.error) throw res.error;
+      if (res.data && res.data.pin_hash) {
+        storedHash = res.data.pin_hash;
+        renderLoginForm();
+      } else {
+        renderSetupForm();
+      }
+    }).catch(function(){
+      loginSub.textContent = "Site control is unavailable right now.";
+      showLoginErr("Could not reach the site database. Close this and try again later.");
+    });
+  }
+  function closeLogin(){
+    loginEl.classList.remove("open");
+    loginEl.setAttribute("aria-hidden", "true");
+    if (!panelEl.classList.contains("open")) document.body.classList.remove("oa-lock");
+  }
+  function enterPanel(){
+    closeLogin();
+    buildPanel();
+    panelEl.classList.add("open");
+    panelEl.setAttribute("aria-hidden", "false");
+    document.body.classList.add("oa-lock");
+  }
+  function closePanel(){
+    panelEl.classList.remove("open");
+    panelEl.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("oa-lock");
+  }
+  $("#oaLoginClose").addEventListener("click", closeLogin);
+  $("#oaLoginCancel").addEventListener("click", closeLogin);
+  loginEl.addEventListener("click", function(e){ if (e.target === loginEl) closeLogin(); });
+  $("#oaPanelClose").addEventListener("click", closePanel);
+  document.addEventListener("keydown", function(e){
+    if (e.key !== "Escape" && e.key !== "Esc") return;
+    if (loginEl.classList.contains("open")) closeLogin();
+    else if (panelEl.classList.contains("open")) closePanel();
+  });
+  $$("#oaTabs button").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      $$("#oaTabs button").forEach(function(b){ b.classList.toggle("active", b === btn); });
+      var tab = btn.getAttribute("data-tab");
+      $$(".oa-tabpane").forEach(function(p){
+        p.hidden = p.getAttribute("data-pane") !== tab;
+      });
+      $("#oaPBody").scrollTop = 0;
+    });
+  });
+
+  /* ---------- trigger: the header ONE.A logo (header only — not the footer) ---------- */
+  var brandLink = document.querySelector("header .brand");
+  if (brandLink) {
+    brandLink.addEventListener("click", function(e){
+      e.preventDefault();
+      openLogin();
+    });
+  }
+
+  /* ---------- go ---------- */
+  loadAll();
+})();
+</script>
 </body>
 </html>
