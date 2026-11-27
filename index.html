@@ -990,8 +990,8 @@
   .ind-chip:hover{border-color:rgba(245,99,33,.5);transform:translateY(-3px)}
   .team-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:28px}
   /* Team leads: 3D flip cards — full-photo front with a small name tag,
-     role + short About on the back (no name on the back — the front tag
-     already names them). Desktop flips on hover; tap/click and keyboard
+     short About only on the back (no name, no role — both live on the
+     front tag). Desktop flips on hover; tap/click and keyboard
      toggle .flipped (phones have no hover). */
   .team-card{
     height:248px;padding:0;overflow:hidden;border-radius:var(--radius);cursor:pointer;
@@ -1051,10 +1051,10 @@
   .team-card p.team-bio{color:var(--muted);font-size:.95rem;margin-top:6px;line-height:1.55}
   .core-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:28px}
   /* Core team: same 3D flip treatment as the leads — full-photo front with a
-     small name tag, role only on the back (no name on the back). NOTE: the
-     front face is built from divs only (no <b>/<span>), and the admin scrape
-     reads the name and role from the front's .core-front-name /
-     .core-front-role, since the back carries the role alone. */
+     small name tag; the back is decorative only (brand mark + slogan — no
+     name, no role) and the card still flips. NOTE: the front face is built
+     from divs only (no <b>/<span>), and the admin scrape reads the name and
+     role from the front's .core-front-name / .core-front-role. */
   .core-card{
     height:210px;padding:0;overflow:hidden;border-radius:var(--radius);cursor:pointer;
     background:transparent;border:none;box-shadow:none;
@@ -1101,6 +1101,21 @@
   .core-front-name,.talent-front-name{font-size:1.02rem;font-weight:800;letter-spacing:.02em;line-height:1.2;color:#fff}
   .core-front-role{font-size:.8rem;font-weight:600;color:var(--prime-2);margin-top:2px}
   .core-body{flex:1;min-width:0;padding:20px 24px;display:flex;flex-direction:column;justify-content:center}
+  /* Decorative flip back (core team): ONE.A brand mark + slogan, centred —
+     no name, no role, purely ornamental. */
+  .flip-deco{
+    flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+    text-align:center;padding:20px;
+  }
+  .flip-deco-mark{
+    width:58px;height:58px;border-radius:50%;
+    background:linear-gradient(150deg,var(--prime-2),var(--prime));
+    display:flex;align-items:center;justify-content:center;
+    font-size:1.9rem;font-weight:900;color:#fff;line-height:1;
+    box-shadow:0 14px 30px -12px rgba(239,67,3,.65);
+  }
+  .flip-deco-name{font-size:1.05rem;font-weight:800;letter-spacing:.3em;text-indent:.3em;color:#fff;line-height:1.2}
+  .flip-deco-slogan{font-size:.68rem;font-weight:600;letter-spacing:.22em;text-indent:.22em;color:var(--faint);text-transform:uppercase}
   .core-card b{display:block;font-size:1.3rem;font-weight:800;letter-spacing:.02em;line-height:1.2}
   .core-card span{color:var(--prime-2);font-size:1.05rem;font-weight:700}
   .talent-row{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:28px}
@@ -2052,7 +2067,6 @@
           </div>
           <div class="team-face team-back">
             <div class="team-body">
-              <div class="team-role">Founder &amp; CEO</div>
               <p class="team-bg">Former Senior Brand Associate at BLAZON Group</p>
               <p class="team-bio">Entrepreneur and marketing strategist with brand, retail, and training experience, leading ONE.A and RPDA to empower brands and young professionals in Myanmar.</p>
             </div>
@@ -2072,7 +2086,6 @@
           </div>
           <div class="team-face team-back">
             <div class="team-body">
-              <div class="team-role">Head of Creative</div>
               <p class="team-bg">Senior Creative Designer at ATOM, part of the Beyond 360</p>
               <p class="team-bio">Creative leader with 10+ years of experience in branding and rebranding, expert in building strong brand identities, leading creative strategy, and delivering impactful visual solutions that drive growth and market presence.</p>
             </div>
@@ -2092,7 +2105,6 @@
           </div>
           <div class="team-face team-back">
             <div class="team-body">
-              <div class="team-role">Account Manager</div>
               <p class="team-bg">Former Account Manager of BOOM Marketing Agency</p>
               <p class="team-bio">Strategic Account Manager experienced in integrated marketing, social media planning, content creation, and performance-focused media buying.</p>
             </div>
@@ -2112,7 +2124,6 @@
           </div>
           <div class="team-face team-back">
             <div class="team-body">
-              <div class="team-role">Content Head</div>
               <p class="team-bg">TBWA | Thailand strategic junior creative</p>
               <p class="team-bio">Leading with innovation and creative storytelling. I empower creative teams to craft content that resonates, turning simple words into unstoppable brand power.</p>
             </div>
@@ -2132,7 +2143,11 @@
             </div>
           </div>
           <div class="core-face core-back">
-            <div class="core-body"><span>Senior Creative Designer</span></div>
+            <div class="flip-deco" aria-hidden="true">
+              <div class="flip-deco-mark">1</div>
+              <div class="flip-deco-name">ONE.A</div>
+              <div class="flip-deco-slogan">ONE TEAM, ONE VISION.</div>
+            </div>
           </div>
         </div>
       </div>
@@ -2146,7 +2161,11 @@
             </div>
           </div>
           <div class="core-face core-back">
-            <div class="core-body"><span>Senior Account Executive</span></div>
+            <div class="flip-deco" aria-hidden="true">
+              <div class="flip-deco-mark">1</div>
+              <div class="flip-deco-name">ONE.A</div>
+              <div class="flip-deco-slogan">ONE TEAM, ONE VISION.</div>
+            </div>
           </div>
         </div>
       </div>
@@ -2160,7 +2179,11 @@
             </div>
           </div>
           <div class="core-face core-back">
-            <div class="core-body"><span>Creative Designer</span></div>
+            <div class="flip-deco" aria-hidden="true">
+              <div class="flip-deco-mark">1</div>
+              <div class="flip-deco-name">ONE.A</div>
+              <div class="flip-deco-slogan">ONE TEAM, ONE VISION.</div>
+            </div>
           </div>
         </div>
       </div>
@@ -2174,7 +2197,11 @@
             </div>
           </div>
           <div class="core-face core-back">
-            <div class="core-body"><span>Corporate Secretary</span></div>
+            <div class="flip-deco" aria-hidden="true">
+              <div class="flip-deco-mark">1</div>
+              <div class="flip-deco-name">ONE.A</div>
+              <div class="flip-deco-slogan">ONE TEAM, ONE VISION.</div>
+            </div>
           </div>
         </div>
       </div>
@@ -2188,7 +2215,11 @@
             </div>
           </div>
           <div class="core-face core-back">
-            <div class="core-body"><span>Junior Content Writer</span></div>
+            <div class="flip-deco" aria-hidden="true">
+              <div class="flip-deco-mark">1</div>
+              <div class="flip-deco-name">ONE.A</div>
+              <div class="flip-deco-slogan">ONE TEAM, ONE VISION.</div>
+            </div>
           </div>
         </div>
       </div>
@@ -3532,10 +3563,10 @@
       bio[id] = { bg: txt($(".team-bg", card)), bio: txt($(".team-bio", card)) };
       return {
         id: id,
-        /* The back carries no name (role + About only), so the name is
+        /* The back carries no name and no role (About only), so both are
            read from the front tag; h3 kept as a legacy fallback. */
         name: txt($(".team-front-name", card)) || txt($("h3", card)),
-        role: txt($(".team-role", card)),
+        role: txt($(".team-front-role", card)),
         photo_url: photo ? photo.getAttribute("src") : "",
         visible: true
       };
@@ -3550,8 +3581,8 @@
       talent_subhead: subs[2] ? domRich(subs[2], "a") : "",
       core: $$(".core-grid .core-card").map(function(c){
         var img = $("img.core-photo", c);
-        /* Back shows the role only — name + role are read from the front. */
-        return { name: txt($(".core-front-name", c)) || txt($("b", c)), role: txt($(".core-front-role", c)) || txt($("span", c)), photo_url: img ? (img.getAttribute("src") || "") : "" };
+        /* Back is decorative only — name + role are read from the front. */
+        return { name: txt($(".core-front-name", c)) || txt($("b", c)), role: txt($(".core-front-role", c)), photo_url: img ? (img.getAttribute("src") || "") : "" };
       }),
       talent_label: txt($(".talent-lbl")),
       talent: $$(".talent-row .talent-chip").map(function(c){
@@ -3826,7 +3857,6 @@
           "</div>" +
           '<div class="team-face team-back">' +
             '<div class="team-body">' +
-              '<div class="team-role in">' + esc(m.role) + "</div>" +
               (bio.bg ? '<p class="team-bg in">' + esc(bio.bg) + "</p>" : "") +
               (bio.bio ? '<p class="team-bio in">' + esc(bio.bio) + "</p>" : "") +
             "</div>" +
@@ -3859,7 +3889,11 @@
                 "</div>" +
               "</div>" +
               '<div class="core-face core-back">' +
-                '<div class="core-body"><span class="in">' + esc(c.role) + "</span></div>" +
+                '<div class="flip-deco" aria-hidden="true">' +
+                  '<div class="flip-deco-mark">1</div>' +
+                  '<div class="flip-deco-name">ONE.A</div>' +
+                  '<div class="flip-deco-slogan">ONE TEAM, ONE VISION.</div>' +
+                "</div>" +
               "</div>" +
             "</div></div>";
         }).join("");
